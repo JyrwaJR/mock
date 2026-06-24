@@ -1,0 +1,6 @@
+# @insecure
+POST https://10.179.35.48:9443/oauth2/token
+Authorization: Basic WEo4U3NiNXFiNWJlZl9KemdhNU1nV1NzUnJBYTp3eHd4NzJDd0lnc0J2aXhkOFlCWUloVGJocDhh
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials

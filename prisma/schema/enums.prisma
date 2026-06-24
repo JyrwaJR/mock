@@ -1,0 +1,16 @@
+enum UserRole {
+  SUPER_ADMIN
+  MEMBER
+
+  @@map("user_role")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ANONYMIZED
+  PENDING
+
+  @@map("user_status")
+}

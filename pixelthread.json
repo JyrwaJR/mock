@@ -1,0 +1,16 @@
+{
+  "alias": "@",
+  "aliases": {
+    "@shared/*": ["src/shared/*"]
+  },
+  "paths": {
+    "features": "src/features",
+    "types": "src/shared/types",
+    "errors": "src/shared/errors",
+    "lib": "src/shared/lib",
+    "utils": "src/shared/utils",
+    "middleware": "src/shared/middleware",
+    "validation": "src/shared/validation",
+    "services": "src/shared/services/storage"
+  }
+}

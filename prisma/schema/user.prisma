@@ -1,0 +1,32 @@
+model User {
+  id                       String        @id @default(uuid())
+  email                    String        @unique
+  name                     String
+  firstName                String
+  middleName               String?
+  lastName                 String?
+  mobile                   String?
+  role                     UserRole[]
+  status                   UserStatus    @default(ACTIVE)
+  dob                      DateTime?
+  failedLoginAttempts      Int           @default(0)
+  lockedUntil              DateTime?
+  imageUrl                 String?
+  password                 String?
+  passwordResetToken       String?
+  passwordResetExpires     DateTime?
+  mfaEnabled               Boolean       @default(false)
+  deletedAt                DateTime?
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+  pushTokens               PushToken[]
+  refreshTokens            RefreshToken[]
+  verificationCodes        VerificationCode[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@index([passwordResetToken])
+  @@map("users")
+}
+
