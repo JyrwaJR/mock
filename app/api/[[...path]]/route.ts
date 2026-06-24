@@ -2,10 +2,10 @@ import axios from "axios";
 import https from "https";
 import { NextRequest, NextResponse } from "next/server";
 
-const TARGET_BASE_URL = "https://10.179.35.48:9443";
+const TARGET_BASE_URL = process.env.TARGET_BASE_URL ?? "https://10.179.35.48:9443";
 
 const httpsAgent = new https.Agent({
-  rejectUnauthorized: false,
+  rejectUnauthorized: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
 });
 
 const HOP_BY_HOP = new Set([
