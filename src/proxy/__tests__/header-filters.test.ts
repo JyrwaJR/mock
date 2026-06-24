@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterResponseHeaders } from "../proxy-handler";
+import { filterResponseHeaders, filterRequestHeaders, isHopByHop } from "../proxy-handler";
 
 describe("filterResponseHeaders", () => {
   it("strips content-length to avoid mismatch after decompression", () => {
@@ -81,5 +81,67 @@ describe("filterResponseHeaders", () => {
 
     expect(result.get("x-ratelimit-remaining")).toBe("42");
     expect(result.get("x-feature-enabled")).toBe("true");
+  });
+});
+
+describe("filterRequestHeaders", () => {
+  it("forwards standard request headers", () => {
+    const headers = new Headers();
+    headers.set("authorization", "Bearer token123");
+    headers.set("content-type", "application/json");
+    headers.set("accept", "application/json");
+    headers.set("x-custom-header", "custom-value");
+
+    const result = filterRequestHeaders(headers);
+
+    expect(result["authorization"]).toBe("Bearer token123");
+    expect(result["content-type"]).toBe("application/json");
+    expect(result["accept"]).toBe("application/json");
+    expect(result["x-custom-header"]).toBe("custom-value");
+  });
+
+  it("strips hop-by-hop headers", () => {
+    const headers = new Headers();
+    headers.set("connection", "keep-alive");
+    headers.set("keep-alive", "timeout=5");
+    headers.set("transfer-encoding", "chunked");
+    headers.set("accept", "application/json");
+
+    const result = filterRequestHeaders(headers);
+
+    expect(result).not.toHaveProperty("connection");
+    expect(result).not.toHaveProperty("keep-alive");
+    expect(result).not.toHaveProperty("transfer-encoding");
+    expect(result["accept"]).toBe("application/json");
+  });
+
+  it("strips Next.js internal headers", () => {
+    const headers = new Headers();
+    headers.set("x-middleware-rewrite", "/api/v1");
+    headers.set("x-invoke-path", "/api/proxy");
+    headers.set("next-url", "http://localhost:3000");
+    headers.set("x-forwarded-for", "127.0.0.1");
+    headers.set("accept", "*/*");
+
+    const result = filterRequestHeaders(headers);
+
+    expect(result).not.toHaveProperty("x-middleware-rewrite");
+    expect(result).not.toHaveProperty("x-invoke-path");
+    expect(result).not.toHaveProperty("next-url");
+    expect(result).not.toHaveProperty("x-forwarded-for");
+    expect(result["accept"]).toBe("*/*");
+  });
+
+  it("strips host and content-length", () => {
+    const headers = new Headers();
+    headers.set("host", "localhost:3000");
+    headers.set("content-length", "128");
+    headers.set("accept", "*/*");
+
+    const result = filterRequestHeaders(headers);
+
+    expect(result).not.toHaveProperty("host");
+    expect(result).not.toHaveProperty("content-length");
+    expect(result["accept"]).toBe("*/*");
   });
 });
