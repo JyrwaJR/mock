@@ -94,14 +94,12 @@ async function handler(
   const { status } = response;
   const responseHeaders = filterResponseHeaders(response.headers);
 
-  if (typeof response.data === "string") {
-    return new NextResponse(response.data, {
-      status,
-      headers: responseHeaders,
-    });
-  }
+  const responseBody =
+    typeof response.data === "string"
+      ? response.data
+      : JSON.stringify(response.data);
 
-  return NextResponse.json(response.data, { status, headers: responseHeaders });
+  return new NextResponse(responseBody, { status, headers: responseHeaders });
 }
 
 export { handler };

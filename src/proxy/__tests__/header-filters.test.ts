@@ -82,6 +82,17 @@ describe("filterResponseHeaders", () => {
     expect(result.get("x-ratelimit-remaining")).toBe("42");
     expect(result.get("x-feature-enabled")).toBe("true");
   });
+
+  it("preserves non-standard content-type from upstream", () => {
+    const upstream = {
+      "content-type": "application/vnd.api+json; charset=utf-8",
+      "x-request-id": "abc",
+    };
+
+    const result = filterResponseHeaders(upstream);
+
+    expect(result.get("content-type")).toBe("application/vnd.api+json; charset=utf-8");
+  });
 });
 
 describe("filterRequestHeaders", () => {
