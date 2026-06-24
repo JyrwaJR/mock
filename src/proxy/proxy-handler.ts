@@ -109,18 +109,17 @@ async function handler(
       ...filterRequestHeaders(request.headers),
       ...forwardedHeaders,
     },
+    responseType: "arraybuffer",
     validateStatus: () => true,
   });
 
   const { status } = response;
   const responseHeaders = filterResponseHeaders(response.headers);
 
-  const responseBody =
-    typeof response.data === "string"
-      ? response.data
-      : JSON.stringify(response.data);
-
-  return new NextResponse(responseBody, { status, headers: responseHeaders });
+  return new NextResponse(response.data as Buffer, {
+    status,
+    headers: responseHeaders,
+  });
 }
 
 export { handler };
