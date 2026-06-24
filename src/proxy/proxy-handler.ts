@@ -44,6 +44,18 @@ export function filterRequestHeaders(headers: Headers): Record<string, string> {
   return result;
 }
 
+export function buildForwardedHeaders(info: {
+  ip: string | undefined;
+  protocol: string;
+  host: string;
+}): Record<string, string> {
+  return {
+    "x-forwarded-for": info.ip ?? "unknown",
+    "x-forwarded-proto": info.protocol,
+    "x-forwarded-host": info.host,
+  };
+}
+
 export function filterResponseHeaders(rawHeaders: Record<string, unknown>): Headers {
   const headers = new Headers();
   for (const [key, value] of Object.entries(rawHeaders)) {
@@ -82,12 +94,21 @@ async function handler(
       ? undefined
       : await request.text();
 
+  const forwardedHeaders = buildForwardedHeaders({
+    ip: request.ip,
+    protocol: request.nextUrl.protocol.replace(":", ""),
+    host: request.headers.get("host") ?? request.nextUrl.host,
+  });
+
   const response = await axios({
     method: request.method,
     url: targetUrl,
     data: body,
     httpsAgent,
-    headers: filterRequestHeaders(request.headers),
+    headers: {
+      ...filterRequestHeaders(request.headers),
+      ...forwardedHeaders,
+    },
     validateStatus: () => true,
   });
 

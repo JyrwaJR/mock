@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterResponseHeaders, filterRequestHeaders, isHopByHop } from "../proxy-handler";
+import { filterResponseHeaders, filterRequestHeaders, isHopByHop, buildForwardedHeaders } from "../proxy-handler";
 
 describe("filterResponseHeaders", () => {
   it("strips content-length to avoid mismatch after decompression", () => {
@@ -154,5 +154,31 @@ describe("filterRequestHeaders", () => {
     expect(result).not.toHaveProperty("host");
     expect(result).not.toHaveProperty("content-length");
     expect(result["accept"]).toBe("*/*");
+  });
+});
+
+describe("buildForwardedHeaders", () => {
+  it("sets x-forwarded-for from request ip", () => {
+    const result = buildForwardedHeaders({
+      ip: "203.0.113.50",
+      protocol: "https",
+      host: "example.com",
+    });
+
+    expect(result["x-forwarded-for"]).toBe("203.0.113.50");
+    expect(result["x-forwarded-proto"]).toBe("https");
+    expect(result["x-forwarded-host"]).toBe("example.com");
+  });
+
+  it("defaults ip to 'unknown' when not available", () => {
+    const result = buildForwardedHeaders({
+      ip: undefined,
+      protocol: "http",
+      host: "localhost:3000",
+    });
+
+    expect(result["x-forwarded-for"]).toBe("unknown");
+    expect(result["x-forwarded-proto"]).toBe("http");
+    expect(result["x-forwarded-host"]).toBe("localhost:3000");
   });
 });
