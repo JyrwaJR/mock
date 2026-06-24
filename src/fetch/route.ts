@@ -1,7 +1,7 @@
 import { withValidation } from "@/src/shared/utils/with-validation/with-validation";
 import { NextResponse } from "next/server";
 import z from "zod";
-import { encrypt, decrypt } from "../[[...]]/encryption";
+import { encrypt, decrypt } from "../mock/[[...]]/encryption";
 
 const RequestBodySchema = z.object({
   functionName: z.string(),

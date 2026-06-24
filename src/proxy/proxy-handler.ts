@@ -95,7 +95,7 @@ async function handler(
       : await request.text();
 
   const forwardedHeaders = buildForwardedHeaders({
-    ip: request.ip,
+    ip: request.headers.get("x-forwarded-for") ?? undefined,
     protocol: request.nextUrl.protocol.replace(":", ""),
     host: request.headers.get("host") ?? request.nextUrl.host,
   });
@@ -116,7 +116,7 @@ async function handler(
   const { status } = response;
   const responseHeaders = filterResponseHeaders(response.headers);
 
-  return new NextResponse(response.data as Buffer, {
+  return new NextResponse(response.data as BodyInit, {
     status,
     headers: responseHeaders,
   });
