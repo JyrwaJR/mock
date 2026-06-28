@@ -1,6 +1,46 @@
-# @insecure
-POST https://10.179.35.48:9443/oauth2/token
-Authorization: Basic WEo4U3NiNXFiNWJlZl9KemdhNU1nV1NzUnJBYTp3eHd4NzJDd0lnc0J2aXhkOFlCWUloVGJocDhh
-Content-Type: application/x-www-form-urlencoded
+### Send Expo Push Notification
+# Replace the token with a real Expo push token for testing
+POST http://localhost:3000/api/notifications/send
+Content-Type: application/json
 
-grant_type=client_credentials
+{
+  "token": "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]",
+  "title": "Test Notification",
+  "body": "This is a test push notification sent from the API.",
+  "data": {
+    "type": "test",
+    "screen": "home"
+  },
+  "priority": "high",
+  "badge": 1,
+  "sound": "default"
+}
+
+### Minimal request (required fields only)
+POST http://localhost:3000/api/notifications/send
+Content-Type: application/json
+
+{
+  "token": "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]",
+  "title": "Hello",
+  "body": "World"
+}
+
+### Invalid token (should return 400)
+POST http://localhost:3000/api/notifications/send
+Content-Type: application/json
+
+{
+  "token": "invalid-token",
+  "title": "Hello",
+  "body": "World"
+}
+
+### Missing required fields (should return 400)
+POST http://localhost:3000/api/notifications/send
+Content-Type: application/json
+
+{
+  "token": "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]",
+  "title": "Hello"
+}
