@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 const TARGET_BASE_URL = process.env.TARGET_BASE_URL ?? "http://localhost:3000";
 
 const httpsAgent = new https.Agent({
-  rejectUnauthorized: process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0",
+  rejectUnauthorized: false,
 });
 
 const HOP_BY_HOP = new Set([
@@ -56,11 +56,17 @@ export function buildForwardedHeaders(info: {
   };
 }
 
-export function filterResponseHeaders(rawHeaders: Record<string, unknown>): Headers {
+export function filterResponseHeaders(
+  rawHeaders: Record<string, unknown>,
+): Headers {
   const headers = new Headers();
   for (const [key, value] of Object.entries(rawHeaders)) {
     const lower = key.toLowerCase();
-    if (isHopByHop(lower) || lower === "content-encoding" || lower === "content-length") {
+    if (
+      isHopByHop(lower) ||
+      lower === "content-encoding" ||
+      lower === "content-length"
+    ) {
       continue;
     }
     if (Array.isArray(value)) {

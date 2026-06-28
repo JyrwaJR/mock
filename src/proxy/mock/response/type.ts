@@ -1,0 +1,14 @@
+export type RpcResponse = {
+  status_code?: "200" | "400" | "401" | "403" | "404" | "429" | "500";
+  message?: string;
+  data?: Record<string, unknown> | Record<string, unknown>[];
+  success_flag?: boolean;
+};
+
+export type RpcMethod =
+  | "employee_login"
+  | "get_employee_details"
+  | "get_employee_leave_details"
+  | "get_employee_leave_details_details"
+  | "get_employee_salary_statements_details"
+  | "get_employee_salary_statements"
