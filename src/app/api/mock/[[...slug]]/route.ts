@@ -76,10 +76,12 @@ export const POST = withValidation(
       const CURRENT_MOCK: Record<RpcMethod, number> = {
         employee_login: 0,
         get_employee_details: 0,
+        get_employee_leaves: 0,
         get_employee_leave_details: 0,
-        get_employee_leave_details_details: 0,
         get_employee_salary_statements: 0,
         get_employee_salary_statements_details: 0,
+        get_leave_reason: 0,
+        get_leave_type: 0,
       };
 
       const response = MOCK_RESPONSES[method]?.[CURRENT_MOCK[method] ?? 0];

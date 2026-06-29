@@ -90,42 +90,54 @@ async function handler(
   request: NextRequest,
   { params }: { params: Promise<{ path?: string[] }> },
 ) {
-  const { path = [] } = await params;
+  try {
+    const { path = [] } = await params;
 
-  const targetUrl =
-    `${TARGET_BASE_URL}/${path.join("/")}` + (request.nextUrl.search || "");
+    let targetUrl =
+      `${TARGET_BASE_URL}/${path.join("/")}` + (request.nextUrl.search || "");
 
-  const body =
-    request.method === "GET" || request.method === "HEAD"
-      ? undefined
-      : await request.text();
+    if (path.join("/") === "oauth2/token") {
+      targetUrl = "https://10.179.35.48:9443/oauth2/token";
+    }
 
-  const forwardedHeaders = buildForwardedHeaders({
-    ip: request.headers.get("x-forwarded-for") ?? undefined,
-    protocol: request.nextUrl.protocol.replace(":", ""),
-    host: request.headers.get("host") ?? request.nextUrl.host,
-  });
+    const body =
+      request.method === "GET" || request.method === "HEAD"
+        ? undefined
+        : await request.text();
 
-  const response = await axios({
-    method: request.method,
-    url: targetUrl,
-    data: body,
-    httpsAgent,
-    headers: {
-      ...filterRequestHeaders(request.headers),
-      ...forwardedHeaders,
-    },
-    responseType: "arraybuffer",
-    validateStatus: () => true,
-  });
+    const forwardedHeaders = buildForwardedHeaders({
+      ip: request.headers.get("x-forwarded-for") ?? undefined,
+      protocol: request.nextUrl.protocol.replace(":", ""),
+      host: request.headers.get("host") ?? request.nextUrl.host,
+    });
 
-  const { status } = response;
-  const responseHeaders = filterResponseHeaders(response.headers);
+    console.log("URL =>", targetUrl);
+    const response = await axios({
+      method: request.method,
+      url: targetUrl,
+      data: body,
+      httpsAgent,
+      headers: {
+        ...filterRequestHeaders(request.headers),
+        ...forwardedHeaders,
+      },
+      responseType: "arraybuffer",
+      validateStatus: () => true,
+    });
 
-  return new NextResponse(response.data as BodyInit, {
-    status,
-    headers: responseHeaders,
-  });
+    const { status } = response;
+    const responseHeaders = filterResponseHeaders(response.headers);
+
+    console.log("Status =>", status);
+
+    return new NextResponse(response.data as BodyInit, {
+      status,
+      headers: responseHeaders,
+    });
+  } catch (error) {
+    console.error("internal server error", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
 }
 
 export { handler };

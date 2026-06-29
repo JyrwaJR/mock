@@ -155,3 +155,46 @@ export const GET_EMPLOYEE_LEAVE_DETAILS_DETAILS: RpcResponse[] = [
     },
   },
 ];
+
+export const GET_LEAVES_REASON: RpcResponse[] = [
+  {
+    success_flag: true,
+    status_code: "200",
+    message: "Success",
+    data: [
+      { code_text: "Self-illness", code_value: "1" },
+      { code_text: "Any Family Members Illness", code_value: "2" },
+      { code_text: "For Self Department Exam", code_value: "3" },
+      { code_text: "Childrens Exam", code_value: "4" },
+      { code_text: "For Taking L.t.c", code_value: "5" },
+      { code_text: "Maharashtra Dharshan Concession", code_value: "6" },
+      { code_text: "Death Of Any Family Members", code_value: "7" },
+      { code_text: "Self Marriage", code_value: "8" },
+      { code_text: "Marriage Of Any Family Member", code_value: "9" },
+      { code_text: "Any Personal Work/problem", code_value: "10" },
+      { code_text: "For Any Religious Ceremony", code_value: "11" },
+      { code_text: "School/college Admission Of Dependant", code_value: "12" },
+      { code_text: "Other Reason", code_value: "13" },
+    ],
+  },
+];
+
+export const GET_LEAVES_TYPE: RpcResponse[] = [
+  {
+    success_flag: true,
+    status_code: "200",
+    message: "Success",
+    data: [
+      { leave_cd: "COM", leave_desc: "Commuted Leave" },
+      { leave_cd: "LND", leave_desc: "Leave Not Due" },
+      { leave_cd: "EOL", leave_desc: "Extraordinary Leave" },
+      { leave_cd: "LPA", leave_desc: "Leave to Prob/Apprentice" },
+      { leave_cd: "EL", leave_desc: "Earned Leave" },
+      { leave_cd: "HPL", leave_desc: "Half Pay Leave" },
+      { leave_cd: "ML", leave_desc: "Maternity Leave" },
+      { leave_cd: "SL", leave_desc: "Study Leave" },
+      { leave_cd: "WPL", leave_desc: "Without Pay Leave" },
+      { leave_cd: "PL", leave_desc: "Paternity Leave" },
+    ],
+  },
+];
