@@ -82,6 +82,10 @@ export const POST = withValidation(
         get_employee_salary_statements_details: 0,
         get_leave_reason: 0,
         get_leave_type: 0,
+        insert_update_leave: 0,
+        get_announcements: 0,
+        get_employee_tax_list: 0,
+        get_employee_tax_detail: 0,
       };
 
       const response = MOCK_RESPONSES[method]?.[CURRENT_MOCK[method] ?? 0];
