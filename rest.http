@@ -45,3 +45,13 @@ Content-Type: application/json
   "token": "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]",
   "title": "Hello"
 }
+
+
+### Missing required fields (should return 400)
+POST http://localhost:3000/api/trpc/post.hello?input=helo
+Content-Type: application/json
+
+{
+  "name":"helo"
+}
+

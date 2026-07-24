@@ -12,9 +12,8 @@ export type RpcMethod =
   | "get_leave_reason"
   | "get_employee_leaves"
   | "get_employee_leave_details"
-  | "get_employee_salary_statements_details"
   | "get_announcements"
   | "insert_update_leave"
-  | "get_employee_salary_statements"
+  | "get_salary_statement"
   | "get_employee_tax_list"
   | "get_employee_tax_detail";
