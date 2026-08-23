@@ -1,52 +1,69 @@
 import { RpcResponse } from "./type";
 
+export const mockSalaryStatement = {
+  gpf_desc: "General Provident Fund",
+  gpf_no: "GPF/MEG/123456",
+  bank_no: "1234567890123456",
+  voucher_no: "VCH-2026-000789",
+  voucher_date: "31/07/2026",
+
+  s_data: [
+    {
+      pname: "Basic Pay",
+      amount: "52000",
+    },
+    {
+      pname: "Dearness Allowance (DA)",
+      amount: "10920",
+    },
+    {
+      pname: "House Rent Allowance (HRA)",
+      amount: "5200",
+    },
+    {
+      pname: "Medical Allowance",
+      amount: "1000",
+    },
+    {
+      pname: "Transport Allowance",
+      amount: "1800",
+    },
+    {
+      pname: "Special Pay",
+      amount: "1500",
+    },
+    {
+      pname: "GPF Deduction",
+      amount: "-5000",
+    },
+    {
+      pname: "Professional Tax",
+      amount: "-200",
+    },
+    {
+      pname: "Income Tax (TDS)",
+      amount: "-3500",
+    },
+    {
+      pname: "GIS",
+      amount: "-500",
+    },
+  ],
+
+  totalEmolument: 72420,
+  totalPayItem: 9200,
+  totalng: 63220,
+
+  grade_pay: "7600",
+  pay_in_pb: "52000",
+
+  net_pay: 63220,
+  net_pay_in_word: "Sixty Three Thousand Two Hundred Twenty Only",
+};
 export const GET_EMPLOYEE_SALARY_STATEMENTS: RpcResponse[] = [
   {
-    success_flag: true,
     status_code: "200",
-    data: {
-      gpf_desc: "MEG/GA",
-      gpf_no: "7476",
-      bank_no: "20003796554",
-      voucher_no: "609",
-      voucher_date: "01/02/2025",
-      s_data: [
-        {
-          pName: "Basic",
-          amount: "36600",
-        },
-        {
-          pName: "Dearness Allowance",
-          amount: "18300",
-        },
-        {
-          pName: "House Rent Allowance",
-          amount: "7200",
-        },
-        {
-          pName: "Medical Allowance",
-          amount: "1000",
-        },
-        {
-          pName: "GPF_STATE",
-          amount: "7500",
-        },
-        {
-          pName: "Professional Tax",
-          amount: "200",
-        },
-        {
-          pName: "Income Tax",
-          amount: "1500",
-        },
-        {
-          pName: "GIS",
-          amount: "500",
-        },
-      ],
-      totalEmolument: 63100,
-      totalPayItem: 9200,
-      totalng: 53900,
-    },
+    message: "Success",
+    data: mockSalaryStatement,
   },
 ];

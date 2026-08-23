@@ -24,7 +24,7 @@ export const GET_EMPLOYEE_DETAIL: RpcResponse[] = [
       emp_sex: "Male",
       emp_status: "Active",
       emp_supan_dt: "2050-05-31",
-      emp_type: "Regular",
+      emp_type: "DB",
       gis_applicable: "Yes",
       inc_dt: "2025-07-01",
 

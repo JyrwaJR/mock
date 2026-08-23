@@ -4,7 +4,6 @@ const ALGORITHM = "aes-256-cbc";
 
 const appSk = "3oiEGuR3zKuv1FKL";
 const appIv = "EisApp";
-const appId = "eis_app";
 
 export const encrypt = (plain: string): string => {
   const key = crypto

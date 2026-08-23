@@ -1,0 +1,66 @@
+import { ValidationError } from '@/src/shared/errors/http-errors';
+import { formatZodIssues } from '@/src/shared/utils/format-zod-issues';
+import type { NextFunction, Request, Response } from 'express';
+import { type RequestHandler } from 'express';
+import type { ZodType } from 'zod';
+
+interface ValidationSchemas<TBody, TQuery, TParams> {
+  body?: ZodType<TBody>;
+  params?: ZodType<TParams>;
+  query?: ZodType<TQuery>;
+}
+
+function defineProp(obj: any, key: string, value: any): void {
+  Object.defineProperty(obj, key, {
+    value,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+}
+
+export function validate<TBody = any, TQuery = any, TParams = any>(
+  schemas: ValidationSchemas<TBody, TQuery, TParams>,
+): RequestHandler<any, any, any, any> {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    try {
+      if (schemas.body) {
+        const result = schemas.body.safeParse(req.body);
+        if (!result.success) {
+          throw new ValidationError(
+            result.error.issues[0]?.message || 'Validation failed',
+            formatZodIssues(result.error.issues),
+          );
+        }
+        defineProp(req, 'body', result.data);
+      }
+
+      if (schemas.query) {
+        const parsed = req.query;
+        const result = schemas.query.safeParse(parsed);
+        if (!result.success) {
+          throw new ValidationError(
+            result.error.issues[0]?.message || 'Validation failed',
+            formatZodIssues(result.error.issues),
+          );
+        }
+        defineProp(req, 'query', result.data);
+      }
+
+      if (schemas.params) {
+        const result = schemas.params.safeParse(req.params);
+        if (!result.success) {
+          throw new ValidationError(
+            result.error.issues[0]?.message || 'Validation failed',
+            formatZodIssues(result.error.issues),
+          );
+        }
+        defineProp(req, 'params', result.data as Record<string, string>);
+      }
+
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}
