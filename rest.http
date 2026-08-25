@@ -55,3 +55,89 @@ Content-Type: application/json
   "name":"helo"
 }
 
+
+# ============================================================
+# CPPS PensionersApp mocks (/api/cpps/...)
+# Switch response shapes via src/features/cssp/api/registry.ts
+# ============================================================
+@baseUrl = http://localhost:3000
+
+### CPPS mock — login (success; tokens are fixed mock strings)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/login
+Content-Type: application/json
+
+{ "version": "24", "username": "plain-ppo", "password": "x" }
+
+### CPPS mock — logout (needs accessToken header)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/logout
+Content-Type: application/json
+Authorization: accessToken cpps-mock-access-token
+
+{}
+
+### CPPS mock — logout with 'expired' token → 202 (Access denied)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/logout
+Content-Type: application/json
+Authorization: accessToken expired
+
+{}
+
+### CPPS mock — get_registration_status
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/get_registration_status
+Content-Type: application/json
+
+{ "version": "24", "ppo_no": "plain-ppo" }
+
+### CPPS mock — create_pensioner
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/api/create_pensioner
+Content-Type: application/json
+
+{ "ppo_no": "plain-ppo", "password": "x", "bank_account_number": "y", "dob": "01-01-1965" }
+
+### CPPS mock — change_password (switch CURRENT_VARIANT to 'access_denied' for 403)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/api/change_password
+Content-Type: application/json
+Authorization: accessToken cpps-mock-access-token
+
+{ "oldPassword": "a", "newPassword": "b" }
+
+### CPPS mock — verification (face match)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/api/verification
+Content-Type: application/json
+Authorization: accessToken cpps-mock-access-token
+
+{ "image_1": "base64-photo" }
+
+### CPPS mock — verification_status
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/api/verification_status
+Content-Type: application/json
+Authorization: accessToken cpps-mock-access-token
+
+{}
+
+### CPPS mock — lc (life certificate submission)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/api/lc
+Content-Type: application/json
+Authorization: accessToken cpps-mock-access-token
+
+{ "ver_mode_code": "01", "selfVerNec": "Yes", "selfVerNmc": "No", "self_ver_code": "1", "place": "TREASURY" }
+
+### CPPS mock — validate_token (any non-empty accessToken passes)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/api/validate_token
+Content-Type: application/json
+Authorization: accessToken cpps-mock-renew-token
+
+{ "uid": "NzgwMDAwMDEwMDAwMDAx" }
+
+### CPPS mock — summary (admin counts; spaced key preserved)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/summary
+Content-Type: application/json
+
+{ "username": "D@p@2021" }
+
+### CPPS mock — summary_ppo (admin per-PPO status)
+POST {{baseUrl}}/api/cpps/PensionersApp/v1/summary_ppo
+Content-Type: application/json
+
+{ "username": "MegPlc@2021", "ppo_no": "12345678" }
+
