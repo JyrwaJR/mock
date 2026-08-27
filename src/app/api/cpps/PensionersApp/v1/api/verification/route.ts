@@ -13,7 +13,8 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function POST(request: NextRequest) {
   const auth = simulateCheckToken(request);
-  if (!auth.ok) return NextResponse.json({ msg: auth.msg }, { status: auth.status });
+  if (!auth.ok)
+    return NextResponse.json({ msg: auth.msg }, { status: auth.status });
   await request.json().catch(() => ({}));
   return respondWith(resolveVariant("verification"));
 }

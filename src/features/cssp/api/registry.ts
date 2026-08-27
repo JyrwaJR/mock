@@ -40,8 +40,12 @@ export type EndpointKey = keyof typeof ALL_VARIANTS;
  * // change to: verification: "photo_not_matched"
  * ```
  */
-export const CURRENT_VARIANT = {
-  login: "success",
+type CurrentVariant = {
+  [K in EndpointKey]: keyof (typeof ALL_VARIANTS)[K] & string;
+};
+
+export const CURRENT_VARIANT: CurrentVariant = {
+  login: "success_no_photo",
   logout: "success",
   get_registration_status: "success_registered",
   create_pensioner: "success",
@@ -52,7 +56,9 @@ export const CURRENT_VARIANT = {
   validate_token: "success",
   summary: "success",
   summary_ppo: "success_registered",
-} as const satisfies { [K in EndpointKey]: keyof (typeof ALL_VARIANTS)[K] & string };
+} as const satisfies {
+  [K in EndpointKey]: keyof (typeof ALL_VARIANTS)[K] & string;
+};
 
 /**
  * Resolves the currently-selected variant for an endpoint.
