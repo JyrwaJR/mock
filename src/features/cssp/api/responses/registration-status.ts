@@ -8,7 +8,7 @@ import { MsgError, RegistrationStatusSuccess } from "../../types";
  */
 const MOCK_BANK_HASH = crypto
   .createHash("sha256")
-  .update("00123456789")
+  .update("1111111111111111")
   .digest("hex");
 
 /** Response shapes of POST PensionersApp/v1/get_registration_status. */
@@ -16,11 +16,19 @@ export const REGISTRATION_STATUS_VARIANTS = {
   /** Active local profile found (get_registration_status.py:56-63). */
   success_registered: {
     status: 200,
-    body: { msg: " ", dob: "01-01-1965", bank_account_no: MOCK_BANK_HASH, status: "02" },
+    body: {
+      msg: " ",
+      dob: "01-01-1965",
+      bank_account_no: MOCK_BANK_HASH,
+      status: "02",
+    },
   },
   // NOTE: real view omits the status arg here, so DRF answers 200
   // (views/get_registration_status.py:45) — quirk preserved deliberately.
-  update_required: { status: 200, body: { msg: "Please update the app from Play Store/App Store" } },
+  update_required: {
+    status: 200,
+    body: { msg: "Please update the app from Play Store/App Store" },
+  },
   /** PPO failed username validation (line 52). */
   invalid_ppo: { status: 400, body: { msg: "Error: Invalid PPO No." } },
   /** CPPS profile lookup returned nothing (line 131). */
@@ -32,4 +40,5 @@ export const REGISTRATION_STATUS_VARIANTS = {
 } satisfies Record<string, MockVariant<RegistrationStatusSuccess | MsgError>>;
 
 /** Selectable variant names for get_registration_status. */
-export type RegistrationStatusVariantName = keyof typeof REGISTRATION_STATUS_VARIANTS;
+export type RegistrationStatusVariantName =
+  keyof typeof REGISTRATION_STATUS_VARIANTS;

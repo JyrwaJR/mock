@@ -45,7 +45,7 @@ type CurrentVariant = {
 };
 
 export const CURRENT_VARIANT: CurrentVariant = {
-  login: "success_no_photo",
+  login: "success",
   logout: "success",
   get_registration_status: "success_registered",
   create_pensioner: "success",
