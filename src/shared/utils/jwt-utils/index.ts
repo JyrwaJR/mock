@@ -27,14 +27,27 @@ export interface MfaTempPayload {
   type: 'mfa_temp';
 }
 
-const accessTokenSecret = new TextEncoder().encode(process.env.JWT_SECRET);
-const refreshTokenSecret = new TextEncoder().encode(process.env.JWT_REFRESH_SECRET);
-const passwordResetSecret = new TextEncoder().encode(process.env.JWT_PASSWORD_RESET_SECRET);
-const jwtAudience = process.env.JWT_AUDIENCE as string;
-const jwtIssuer = process.env.JWT_ISSUER as string;
-const jwtAccessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY as string;
-const jwtRefreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY as string;
-const jwtPasswordResetTokenExpiry = process.env.PASSWORD_RESET_TOKEN_EXPIRY as string;
+/**
+ * Runtime-safe environment variables for JWT signing. Secrets fall back to a
+ * development-only default so the app boots without a `.env`; expiry values
+ * fall back to valid `jose` time strings (e.g. `15m`, `7d`) to avoid the
+ * `Invalid time period format` error when an env value is missing or malformed.
+ */
+const accessTokenSecret = new TextEncoder().encode(
+  process.env.JWT_SECRET || "dev-access-secret-change-me",
+);
+const refreshTokenSecret = new TextEncoder().encode(
+  process.env.JWT_REFRESH_SECRET || "dev-refresh-secret-change-me",
+);
+const passwordResetSecret = new TextEncoder().encode(
+  process.env.JWT_PASSWORD_RESET_SECRET || "dev-password-reset-secret-change-me",
+);
+const jwtAudience = process.env.JWT_AUDIENCE || "mock";
+const jwtIssuer = process.env.JWT_ISSUER || "mock";
+const jwtAccessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY || "15m";
+const jwtRefreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY || "7d";
+const jwtPasswordResetTokenExpiry =
+  process.env.PASSWORD_RESET_TOKEN_EXPIRY || "1h";
 
 /** Signs a short-lived access JWT for the given user ID. */
 export async function signAccessToken(userId: string): Promise<string> {
