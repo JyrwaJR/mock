@@ -1,4 +1,4 @@
-import { RpcResponse } from "./type";
+import { RpcResponse } from "../../types";
 
 export const GET_EMPLOYEE_DETAIL: RpcResponse[] = [
   {

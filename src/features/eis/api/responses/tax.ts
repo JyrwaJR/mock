@@ -1,4 +1,4 @@
-import { RpcResponse } from "./type";
+import { RpcResponse } from "../../types";
 
 /**
  * Tax regime options under Indian income tax.

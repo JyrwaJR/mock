@@ -7,7 +7,7 @@ import {
   INSERT_UPDATE_LEAVE,
 } from "./leaves";
 import { GET_EMPLOYEE_DETAIL } from "./get-employee-details";
-import { RpcMethod, RpcResponse } from "./type";
+import { RpcMethod, RpcResponse } from "../../types";
 import { GET_EMPLOYEE_SALARY_STATEMENTS } from "./statement";
 import { GET_ANNOUNCEMENTS } from "./announcement";
 import { GET_EMP_TAX_DETAIL, GET_EMP_TAX_LIST } from "./tax";

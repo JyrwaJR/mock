@@ -1,4 +1,4 @@
-import { RpcResponse } from "./type";
+import { RpcResponse } from "../../types";
 
 export const mockSalaryStatement = {
   gpf_desc: "General Provident Fund",
