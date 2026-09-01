@@ -30,5 +30,6 @@ export type RpcMethod =
   | "get_salary_statement"
   | "get_epay_slip_data"
   | "get_epay_slip_details"
+  | "insert_ge_no"
   | "get_employee_tax_list"
   | "get_employee_tax_detail";

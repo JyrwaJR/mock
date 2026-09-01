@@ -32,7 +32,7 @@ export type EPayslip = EPayslipListItem & {
   valid_to: string | null;
   /** Base64-encoded PDF document (full page). */
   pdf: string;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Mock data — pay slip list
@@ -126,5 +126,13 @@ export const GET_EPAY_SLIP_DETAILS: RpcResponse[] = [
     status_code: "200",
     message: "Pay slip detail fetched successfully",
     data: MOCK_PAYSLIP_DETAIL,
+  },
+];
+
+export const INSERT_UPDATE_GE_NUMBER: RpcResponse[] = [
+  {
+    success_flag: true,
+    status_code: "200",
+    message: "GE updated successfully",
   },
 ];
