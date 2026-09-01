@@ -19,6 +19,8 @@ export const CURRENT_MOCK: Record<RpcMethod, number> = {
   get_announcements: 0,
   get_employee_tax_list: 0,
   get_employee_tax_detail: 0,
+  get_epay_slip_data: 0,
+  get_epay_slip_details: 0,
 };
 
 /**

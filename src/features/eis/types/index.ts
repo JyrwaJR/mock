@@ -28,5 +28,7 @@ export type RpcMethod =
   | "get_announcements"
   | "insert_update_leave"
   | "get_salary_statement"
+  | "get_epay_slip_data"
+  | "get_epay_slip_details"
   | "get_employee_tax_list"
   | "get_employee_tax_detail";

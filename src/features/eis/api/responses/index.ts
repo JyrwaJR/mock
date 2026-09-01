@@ -11,6 +11,7 @@ import { RpcMethod, RpcResponse } from "../../types";
 import { GET_EMPLOYEE_SALARY_STATEMENTS } from "./statement";
 import { GET_ANNOUNCEMENTS } from "./announcement";
 import { GET_EMP_TAX_DETAIL, GET_EMP_TAX_LIST } from "./tax";
+import { GET_EPAY_SLIP_DATA, GET_EPAY_SLIP_DETAILS } from "./e-pay-slip";
 
 export const MOCK_RESPONSES: Record<RpcMethod, RpcResponse[]> = {
   employee_login: EMPLOYEE_LOGIN,
@@ -24,4 +25,6 @@ export const MOCK_RESPONSES: Record<RpcMethod, RpcResponse[]> = {
   get_announcements: GET_ANNOUNCEMENTS,
   get_employee_tax_list: GET_EMP_TAX_LIST,
   get_employee_tax_detail: GET_EMP_TAX_DETAIL,
+  get_epay_slip_data: GET_EPAY_SLIP_DATA,
+  get_epay_slip_details: GET_EPAY_SLIP_DETAILS,
 };
