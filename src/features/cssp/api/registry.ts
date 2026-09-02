@@ -51,7 +51,7 @@ export const CURRENT_VARIANT: CurrentVariant = {
   create_pensioner: "success",
   change_password: "success",
   verification: "success",
-  verification_status: "success_dlc_valid",
+  verification_status: "success_pending",
   lc: "success",
   validate_token: "success",
   summary: "success",
@@ -76,5 +76,6 @@ export function resolveVariant(endpoint: EndpointKey): MockVariant {
       `Unknown variant '${String(CURRENT_VARIANT[endpoint])}' for ${endpoint}`,
     );
   }
+
   return variant;
 }

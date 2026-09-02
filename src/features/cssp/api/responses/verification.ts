@@ -4,7 +4,7 @@ import { MsgError, VerificationSuccess } from "../../types";
 /** Response shapes of POST PensionersApp/v1/api/verification (views/verification.py). */
 export const VERIFICATION_VARIANTS = {
   /** Face match [1]; returns pension class code (verification.py:226). */
-  success: { status: 200, body: { msg: "success", self_ver_code: "44" } }, //
+  success: { status: 200, body: { msg: "success", self_ver_code: "01" } }, //
   /** Faces not similar; sentinel code '22' (verification.py:230). */
   photo_not_matched: {
     status: 200,
