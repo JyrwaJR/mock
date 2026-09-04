@@ -129,3 +129,16 @@ export function rewriteUrlToProxy(
     : `/${pathAndQuery}`;
   return `${proxyPrefix}${withLeadingSlash}`;
 }
+
+/**
+ * Decides whether a swagger-ui request URL should be routed through the live
+ * proxy. Same-origin Next.js API routes — such as the spec fetch at
+ * `/api/swagger/spec` — must pass through untouched; everything else
+ * (upstream operation URLs, whether absolute or relative) is proxied.
+ *
+ * @param targetUrl - URL swagger-ui is about to request.
+ * @returns `true` when the URL should go through `/api/swagger/proxy/**`.
+ */
+export function shouldProxyUrl(targetUrl: string): boolean {
+  return !targetUrl.startsWith("/api/");
+}

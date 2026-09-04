@@ -5,6 +5,7 @@ import {
   buildTargetUrl,
   rewriteUrlToProxy,
   sanitizePathSegments,
+  shouldProxyUrl,
 } from "../request-builder";
 
 describe("sanitizePathSegments", () => {
@@ -120,5 +121,22 @@ describe("rewriteUrlToProxy", () => {
     expect(rewriteUrlToProxy("http://h/p", "/custom/proxy")).toBe(
       "/custom/proxy/p",
     );
+  });
+});
+
+describe("shouldProxyUrl", () => {
+  it("skips same-origin Next API routes (spec fetch)", () => {
+    expect(shouldProxyUrl("/api/swagger/spec")).toBe(false);
+    expect(shouldProxyUrl("/api/anything")).toBe(false);
+    expect(shouldProxyUrl("/api/swagger/proxy/greet")).toBe(false);
+  });
+
+  it("proxies absolute upstream URLs", () => {
+    expect(shouldProxyUrl("http://localhost:4098/greet")).toBe(true);
+    expect(shouldProxyUrl("http://upstream/api/v1/list")).toBe(true);
+  });
+
+  it("proxies relative upstream paths", () => {
+    expect(shouldProxyUrl("/greet")).toBe(true);
   });
 });
