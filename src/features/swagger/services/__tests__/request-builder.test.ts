@@ -3,6 +3,7 @@ import {
   API_KEY_HEADER,
   buildProxyHeaders,
   buildTargetUrl,
+  rewriteUrlToProxy,
   sanitizePathSegments,
 } from "../request-builder";
 
@@ -87,5 +88,37 @@ describe("buildProxyHeaders", () => {
   it("omits the API key header when not configured", () => {
     const headers = buildProxyHeaders(new Headers(), undefined);
     expect(headers.has(API_KEY_HEADER)).toBe(false);
+  });
+});
+
+describe("rewriteUrlToProxy", () => {
+  it("rewrites an absolute server URL to the proxy prefix", () => {
+    expect(
+      rewriteUrlToProxy("http://localhost:4096/pensioners?limit=10"),
+    ).toBe("/api/swagger/proxy/pensioners?limit=10");
+  });
+
+  it("maps the root path to the bare proxy prefix", () => {
+    expect(rewriteUrlToProxy("http://localhost:4096/")).toBe(
+      "/api/swagger/proxy",
+    );
+  });
+
+  it("keeps an already-relative URL intact", () => {
+    expect(rewriteUrlToProxy("/pensioners/123")).toBe(
+      "/api/swagger/proxy/pensioners/123",
+    );
+  });
+
+  it("strips fragments and keeps encoded query values", () => {
+    expect(
+      rewriteUrlToProxy("https://api.example.com/v1/users?a=two%20words#section"),
+    ).toBe("/api/swagger/proxy/v1/users?a=two%20words");
+  });
+
+  it("supports a custom proxy prefix", () => {
+    expect(rewriteUrlToProxy("http://h/p", "/custom/proxy")).toBe(
+      "/custom/proxy/p",
+    );
   });
 });

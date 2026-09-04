@@ -17,8 +17,8 @@ const urlWithoutCredentials = (label: string) =>
 /**
  * Zod schema for the swagger feature environment variables.
  *
- * `SWAGGER_API_URL` is required (spec location). `SWAGGER_BASE_URL` is
- * optional at parse time but REQUIRED by the proxy route at call time.
+ * `SWAGGER_API_URL` is required (spec location, absolute URL). `SWAGGER_BASE_URL`
+ * is optional at parse time but REQUIRED by the proxy route at call time.
  * `SWAGGER_API_KEY` is optional and injected as `x-api-key` upstream.
  */
 export const swaggerEnvSchema = z.object({
@@ -48,8 +48,8 @@ export function getSwaggerEnv(
   const parsed = swaggerEnvSchema.safeParse(env);
   if (!parsed.success) {
     const issues = parsed.error.issues
-      .map((issue) => issue.path.join("."))
-      .join(", ");
+      .map((issue) => `${issue.path.join(".") || "swagger env"}: ${issue.message}`)
+      .join("; ");
     throw new Error(`Invalid swagger configuration: ${issues}`);
   }
   return parsed.data;

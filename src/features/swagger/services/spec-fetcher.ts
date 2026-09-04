@@ -37,9 +37,18 @@ export class SpecUnavailableError extends Error {
 export async function getOpenApiSpec(): Promise<OpenApiSpec> {
   const parsed = swaggerEnvSchema.safeParse(process.env);
   if (!parsed.success) {
-    throw new SpecUnavailableError(
-      "SWAGGER_API_URL is not configured. Add SWAGGER_API_URL to your .env file.",
+    const apiUrlIssue = parsed.error.issues.find(
+      (issue) => issue.path.join(".") === "SWAGGER_API_URL",
     );
+    if (apiUrlIssue?.code === "invalid_type") {
+      throw new SpecUnavailableError(
+        "SWAGGER_API_URL is not configured. Add SWAGGER_API_URL to your .env file.",
+      );
+    }
+    const reasons = parsed.error.issues
+      .map((issue) => `${issue.path.join(".") || "value"}: ${issue.message}`)
+      .join("; ");
+    throw new SpecUnavailableError(`Invalid SWAGGER_API_URL: ${reasons}`);
   }
 
   if (cache && Date.now() - cache.fetchedAt < CACHE_TTL_MS) {

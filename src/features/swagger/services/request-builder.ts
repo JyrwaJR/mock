@@ -99,3 +99,33 @@ export function buildProxyHeaders(
   if (apiKey) headers.set(API_KEY_HEADER, apiKey);
   return headers;
 }
+
+/**
+ * Rewrites a swagger-ui request URL so it targets the same-origin proxy
+ * route instead of the upstream server. Handles absolute URLs (strips the
+ * origin) and relative URLs (prepends the proxy prefix). Intended for the
+ * swagger-ui `requestInterceptor` so Try-it-out calls flow through
+ * `/api/swagger/proxy/**`, preserving API-key injection and header
+ * allowlisting.
+ *
+ * @param targetUrl - URL swagger-ui resolved from the spec server + path.
+ * @param proxyPrefix - Proxy route prefix (defaults to `/api/swagger/proxy`).
+ * @returns A same-origin URL routed through the proxy route.
+ */
+export function rewriteUrlToProxy(
+  targetUrl: string,
+  proxyPrefix = "/api/swagger/proxy",
+): string {
+  let pathAndQuery: string;
+  try {
+    const url = new URL(targetUrl);
+    pathAndQuery = url.pathname === "/" ? "" : `${url.pathname}${url.search}`;
+  } catch {
+    pathAndQuery = targetUrl.split("#")[0];
+  }
+  if (!pathAndQuery) return proxyPrefix;
+  const withLeadingSlash = pathAndQuery.startsWith("/")
+    ? pathAndQuery
+    : `/${pathAndQuery}`;
+  return `${proxyPrefix}${withLeadingSlash}`;
+}
