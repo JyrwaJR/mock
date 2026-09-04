@@ -9,17 +9,18 @@ export const dynamic = "force-dynamic";
 
 /**
  * Serves the OpenAPI spec fetched from `SWAGGER_API_URL` (TTL-cached
- * server-side). Returns `{ spec }` on success; a `503` envelope with a
- * user-displayable `error` message on misconfiguration/fetch failure.
+ * server-side) as the raw document, suitable for swagger-ui's `url` prop.
+ * Returns a `503` with a user-displayable `error` message on
+ * misconfiguration/fetch failure.
  *
  * @example
  *   GET /api/swagger/spec
- *   → 200 { "spec": { "openapi": "3.0.0", "paths": { ... } } }
+ *   → 200 { "openapi": "3.0.0", "paths": { ... } }
  */
 export async function GET(): Promise<NextResponse> {
   try {
     const spec = await getOpenApiSpec();
-    return NextResponse.json({ spec });
+    return NextResponse.json(spec);
   } catch (err) {
     const message =
       err instanceof SpecUnavailableError
