@@ -6,21 +6,22 @@ import {
 } from "@/src/features/swagger/services/request-builder";
 import { callTarget } from "@/src/features/swagger/services/proxy-caller";
 
-/** Never statically prerender the proxy — it forwards every request. */
+/** Never statically cache any proxied response. */
 export const dynamic = "force-dynamic";
 
-/** HTTP methods forwarded upstream with a request body. */
-const BODY_METHODS = new Set(["POST", "PUT", "PATCH"]);
+/** Methods with a forwardable request body. */
+const METHODS_WITH_BODY = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+interface ProxyRouteContext {
+  params: Promise<{ path?: string[] }>;
+}
 
 /**
- * Proxies a request to the env-configured `SWAGGER_BASE_URL` upstream.
- *
- * The incoming path (after `/api/swagger/proxy/`) is sanitized and appended
- * to the base URL; query params are forwarded; only allowlisted headers pass
- * through; `SWAGGER_API_KEY` (if set) is injected as `x-api-key`. The
- * response is a JSON envelope `{ status, headers, body }` whose HTTP status
- * mirrors the upstream status. Returns 503 when env is missing/malformed and
- * 502 when the upstream cannot be reached.
+ * Shared handler for every supported HTTP method. Builds the upstream URL
+ * from `SWAGGER_BASE_URL` + sanitized path segments + forwarded query params,
+ * injects the optional `x-api-key`, forwards allowlisted headers and body,
+ * and returns an envelope `{ status, headers, body }` mirroring the upstream
+ * response. Upstream HTTP error statuses are forwarded unchanged.
  *
  * @param request - The incoming proxied request.
  * @param context - Route context carrying the catch-all path segments.
@@ -28,7 +29,7 @@ const BODY_METHODS = new Set(["POST", "PUT", "PATCH"]);
  */
 async function handleProxy(
   request: NextRequest,
-  context: { params: Promise<{ path?: string[] }> },
+  context: ProxyRouteContext,
 ): Promise<NextResponse> {
   const { path } = await context.params;
 
@@ -45,25 +46,36 @@ async function handleProxy(
     return NextResponse.json(
       {
         error:
-          "SWAGGER_BASE_URL is not configured. Add SWAGGER_BASE_URL to your .env file.",
+          "SWAGGER_BASE_URL is not configured. Add it to your .env file.",
       },
       { status: 503 },
     );
   }
 
-  const target = buildTargetUrl(
-    env.SWAGGER_BASE_URL,
-    path,
-    request.nextUrl.searchParams,
-  );
-  const headers = buildProxyHeaders(request.headers, env.SWAGGER_API_KEY);
-  const body = BODY_METHODS.has(request.method)
-    ? await request.text()
-    : null;
-
   try {
-    const result = await callTarget(request.method, target, headers, body);
-    return NextResponse.json(result, { status: result.status });
+    const url = buildTargetUrl(
+      env.SWAGGER_BASE_URL,
+      path,
+      request.nextUrl.searchParams,
+    );
+    const headers = buildProxyHeaders(request.headers, env.SWAGGER_API_KEY);
+
+    let body: string | null = null;
+    if (METHODS_WITH_BODY.has(request.method)) {
+      body = await request.text();
+      if (body.length > 0 && !headers.has("content-type")) {
+        headers.set("content-type", "application/json");
+      }
+    }
+
+    const result = await callTarget(request.method, url, headers, body);
+    return NextResponse.json(
+      { status: result.status, headers: result.headers, body: result.body },
+      {
+        status:
+          result.status >= 200 && result.status < 600 ? result.status : 502,
+      },
+    );
   } catch (err) {
     return NextResponse.json(
       { error: (err as Error).message },
