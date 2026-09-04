@@ -1,14 +1,12 @@
 /**
- * Swagger feature public API.
+ * Swagger feature public API (server-safe modules only).
  *
- * NOTE: client components should import `SpecExplorer` directly from
- * `@/src/features/swagger/components/spec-explorer` — importing this barrel
- * from a client component would pull the server-only fetcher/validator
- * modules into the client bundle.
+ * The swagger-ui client wrapper and its ambient type declaration are imported
+ * directly from `@/src/features/swagger/components/swagger-ui-client` and
+ * `@/src/features/swagger/types/swagger-ui-react` — the barrel deliberately
+ * excludes client-only bindings so it can be imported from server code
+ * without pulling the swagger-ui bundle into the server graph.
  */
-export { SpecExplorer } from "./components/spec-explorer";
-export { EndpointDetail } from "./components/endpoint-detail";
-export { JsonViewer } from "./components/json-viewer";
 export {
   getSwaggerEnv,
   swaggerEnvSchema,
@@ -19,6 +17,7 @@ export {
   API_KEY_HEADER,
   buildProxyHeaders,
   buildTargetUrl,
+  rewriteUrlToProxy,
   sanitizePathSegments,
 } from "./services/request-builder";
 export { callTarget } from "./services/proxy-caller";

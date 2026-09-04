@@ -29,6 +29,7 @@
     "react-dom": "19.2.4",
     "react-native-get-random-values": "^2.0.0",
     "react-native-uuid": "^2.0.4",
+    "swagger-ui-react": "^5.32.15",
     "zod": "^4.4.3"
   },
   "devDependencies": {
