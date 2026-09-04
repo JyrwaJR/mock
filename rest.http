@@ -141,3 +141,23 @@ Content-Type: application/json
 
 { "username": "MegPlc@2021", "ppo_no": "12345678" }
 
+# ============================================================
+# Swagger explorer (/api/swagger/...)
+# Requires SWAGGER_API_URL (+ optional SWAGGER_BASE_URL) env
+# ============================================================
+
+### Swagger — fetch the OpenAPI spec
+GET {{baseUrl}}/api/swagger/spec
+Accept: application/json
+
+### Swagger — proxy a GET upstream (example: /pensioners)
+GET {{baseUrl}}/api/swagger/proxy/pensioners
+Authorization: Bearer <token>
+
+### Swagger — proxy a POST upstream (JSON body forwarded)
+POST {{baseUrl}}/api/swagger/proxy/pensioners
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{ "name": "Example Pensioner" }
+
