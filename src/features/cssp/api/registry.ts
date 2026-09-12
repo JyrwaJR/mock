@@ -1,6 +1,7 @@
 import { MockVariant } from "./respond";
 import { CHANGE_PASSWORD_VARIANTS } from "./responses/change-password";
 import { CREATE_PENSIONER_VARIANTS } from "./responses/create-pensioner";
+import { PENSION_STATEMENTS_VARIANTS } from "./responses/pension-statements";
 import { LC_VARIANTS } from "./responses/lc";
 import { LOGIN_VARIANTS } from "./responses/login";
 import { LOGOUT_VARIANTS } from "./responses/logout";
@@ -17,6 +18,7 @@ const ALL_VARIANTS = {
   logout: LOGOUT_VARIANTS,
   get_registration_status: REGISTRATION_STATUS_VARIANTS,
   create_pensioner: CREATE_PENSIONER_VARIANTS,
+  pension_statements: PENSION_STATEMENTS_VARIANTS,
   change_password: CHANGE_PASSWORD_VARIANTS,
   verification: VERIFICATION_VARIANTS,
   verification_status: VERIFICATION_STATUS_VARIANTS,
@@ -49,6 +51,7 @@ export const CURRENT_VARIANT: CurrentVariant = {
   logout: "success",
   get_registration_status: "success_registered",
   create_pensioner: "success",
+  pension_statements: "success",
   change_password: "success",
   verification: "success",
   verification_status: "success_pending",

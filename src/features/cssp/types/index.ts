@@ -134,3 +134,53 @@ export interface SummaryPpoSuccess {
   /** DLC remarks when a DLC exists. */
   dlc_remarks?: string;
 }
+
+/** One period-based pension payment statement row from the pension-statements endpoint. */
+export interface PensionStatementRow {
+  /** Period start, 'Mon-YY' e.g. 'Jul-22'. */
+  date_frm: string;
+  /** Period end, 'Mon-YY'; always equals date_frm (period-based row). */
+  date_to: string;
+  /** Number of months covered, '1' normally. */
+  no_of_months: string;
+  /** Basic pay for the period. */
+  bp: string;
+  /** Dearness pay. */
+  dp: string;
+  /** Dearness allowance. */
+  da: string;
+  /** Medical allowance. */
+  ma: string;
+  /** Age bonus. */
+  age_bonus: string;
+  /** Washing allowance. */
+  wa: string;
+  /** Dearness relief arrears. */
+  dra: string;
+  /** Other allowances. */
+  oth: string;
+  /** Arrears gross amount. */
+  arr_gross: string;
+  /** Gratuity gross amount. */
+  gra_gross: string;
+  /** Commutation gross amount. */
+  comm_gross: string;
+  /** Deductions for the period. */
+  deduction: string;
+  /** Net amount payable. */
+  net_amt: string;
+  /** DDO bill date, 'd/m/yy' e.g. '6/24/26'. */
+  ddo_bill_date: string;
+}
+
+/**
+ * Success payload of POST PensionersApp/v1/pension-statements.
+ * `base64` carries a placeholder base64-encoded PDF; `data` holds the full
+ * per-period payment statement array.
+ */
+export interface PensionStatementsSuccess {
+  /** Base64-encoded mock pension statement PDF (placeholder). */
+  base64: string;
+  /** Period-based payment statement rows (all string-valued). */
+  data: PensionStatementRow[];
+}
