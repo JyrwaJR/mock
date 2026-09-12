@@ -8,6 +8,6 @@ import { respondWith } from "@feature/cssp/api/respond";
  *
  * @returns Registry-selected pension-statements response.
  */
-export async function POST() {
+export async function GET() {
   return respondWith(resolveVariant("pension_statements"));
 }
