@@ -161,3 +161,45 @@ Authorization: Bearer <token>
 
 { "name": "Example Pensioner" }
 
+# ============================================================
+# Echo (/api/echo) captures any body and replays it on GET,
+# mirroring the POST's Content-Type header.
+# ============================================================
+
+### Echo — capture JSON (response mirrors content-type)
+POST {{baseUrl}}/api/echo
+Content-Type: application/json
+
+{
+  "hello": "world",
+  "count": 42
+}
+
+### Echo — read captured JSON body
+GET {{baseUrl}}/api/echo
+
+### Echo — capture form-urlencoded
+POST {{baseUrl}}/api/echo
+Content-Type: application/x-www-form-urlencoded
+
+name=Jane&age=30
+
+### Echo — read captured form data (returns the same content-type as the POST)
+GET {{baseUrl}}/api/echo
+
+### Echo — capture multipart/form-data (boundary preserved verbatim)
+POST {{baseUrl}}/api/echo
+Content-Type: multipart/form-data; boundary=----EchoBoundary
+
+------EchoBoundary
+Content-Disposition: form-data; name="field"
+
+value
+------EchoBoundary--
+
+### Echo — read captured multipart body
+GET {{baseUrl}}/api/echo
+
+### Echo — no capture yet (expect 404)
+GET {{baseUrl}}/api/echo
+
