@@ -20,5 +20,5 @@ export function decryptText(encryptedText: string): string {
     ttl: 0,
   });
 
-  return token.decode();
+  return JSON.parse(token.decode());
 }

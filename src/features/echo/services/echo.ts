@@ -4,12 +4,7 @@ import {
 } from "@/src/shared/errors/http-errors";
 import type { EchoBody } from "@/src/features/echo/validators";
 import type { EchoEntry } from "@/src/features/echo/types";
-import {
-  DEFAULT_ENTRY_KEY,
-  getAllEntries,
-  getEntry,
-  setEntry,
-} from "./store";
+import { DEFAULT_ENTRY_KEY, getAllEntries, getEntry, setEntry } from "./store";
 
 /**
  * Maximum accepted registration size in UTF-8 bytes. Keeps the in-memory
@@ -100,7 +95,13 @@ export function lookup(slug: string[]): Response {
   if (!entry) {
     throw new NotFoundError(`No mock registered for "${url}"`);
   }
-  return Response.json(entry.data, { status: entry.status_code ?? 200 });
+  const statusCode = entry.status_code ?? 200;
+  console.log({
+    url,
+    status_code: statusCode,
+  });
+
+  return Response.json(entry.data, { status: statusCode });
 }
 
 /**

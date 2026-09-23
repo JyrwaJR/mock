@@ -6,8 +6,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     const encrypted = encryptFields(body);
+    const encryptedObject = encryptFields(JSON.stringify(body));
 
-    return NextResponse.json(encrypted);
+    return NextResponse.json({
+      object: encryptedObject,
+      data: encrypted,
+    });
   } catch (error) {
     console.error("Encryption failed:", error);
 

@@ -9,8 +9,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(decrypted);
   } catch (error) {
-    console.error("Decryption failed:", error);
-
     return NextResponse.json(
       {
         message: "Failed to decrypt request",
