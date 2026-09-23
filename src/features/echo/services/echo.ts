@@ -71,7 +71,7 @@ export function register(body: EchoBody): Response {
     entry,
   );
 
-  return Response.json(body.data, { status: 200 });
+  return Response.json(body.data, { status: body.status_code ?? 200 });
 }
 
 /**
