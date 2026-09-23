@@ -45,12 +45,12 @@ export function normalizeUrl(input: string): string {
  * URL — an existing entry for the same URL is overwritten and the JSON file is
  * rewritten. When `url` is omitted, the entry is stored as the **default
  * fallback**: lookups on `/api/echo/*` that match no exact path return this
- * entry's data. The response is always `200` with only the `data` field (the
- * `url` and `status_code` are stripped), regardless of the stored
- * `status_code`.
+ * entry's data. The response echoes only the `data` field (the `url` is
+ * stripped) at the submitted `status_code`, defaulting to `200` when it is
+ * omitted.
  *
  * @param body - Validated request body (`{ url?, data, status_code? }`).
- * @returns A `200` JSON response echoing `body.data`.
+ * @returns A JSON response echoing `body.data` at `body.status_code ?? 200`.
  * @throws PayloadTooLargeError when the serialized body exceeds
  *   {@link MAX_CAPTURE_BYTES}.
  */
