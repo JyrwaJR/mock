@@ -162,44 +162,58 @@ Authorization: Bearer <token>
 { "name": "Example Pensioner" }
 
 # ============================================================
-# Echo (/api/echo) captures any body and replays it on GET,
-# mirroring the POST's Content-Type header.
+# Echo (/api/echo) is a persisted mock registry. POST
+# { "url": "/path", "data": {...}, "status_code": 201 } to
+# register a mock; requests to /api/echo/<url> return the
+# entry's data with its status code. Submitting a body without
+# a `url` registers the default fallback, which is returned for
+# any path with no exact match. Entries persist in
+# data/echo/registry.json across server restarts.
 # ============================================================
 
-### Echo — capture JSON (response mirrors content-type)
+### Echo — register the default fallback (no url; echoes data back and stores it)
 POST {{baseUrl}}/api/echo
 Content-Type: application/json
 
 {
-  "hello": "world",
-  "count": 42
+  "data": {
+    "hello": "world",
+    "count": 42
+  }
 }
 
-### Echo — read captured JSON body
-GET {{baseUrl}}/api/echo
-
-### Echo — capture form-urlencoded
+### Echo — register a mock for /articles/1 with status 201
 POST {{baseUrl}}/api/echo
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-name=Jane&age=30
+{
+  "url": "/articles/1",
+  "data": {
+    "title": "Hello"
+  },
+  "status_code": 201
+}
 
-### Echo — read captured form data (returns the same content-type as the POST)
-GET {{baseUrl}}/api/echo
-
-### Echo — capture multipart/form-data (boundary preserved verbatim)
+### Echo — register a mock for /healthz (default status 200)
 POST {{baseUrl}}/api/echo
-Content-Type: multipart/form-data; boundary=----EchoBoundary
+Content-Type: application/json
 
-------EchoBoundary
-Content-Disposition: form-data; name="field"
+{
+  "url": "/healthz",
+  "data": {
+    "status": "ok"
+  }
+}
 
-value
-------EchoBoundary--
-
-### Echo — read captured multipart body
+### Echo — list all registered entries ("*" is the fallback entry)
 GET {{baseUrl}}/api/echo
 
-### Echo — no capture yet (expect 404)
-GET {{baseUrl}}/api/echo
+### Echo — matched lookup (expect 201 + {"title":"Hello"})
+GET {{baseUrl}}/api/echo/articles/1
+
+### Echo — matched lookup via POST (body ignored; lookup by path)
+POST {{baseUrl}}/api/echo/articles/1
+
+### Echo — unmatched path falls back to the url-less default entry
+GET {{baseUrl}}/api/echo/missing
 

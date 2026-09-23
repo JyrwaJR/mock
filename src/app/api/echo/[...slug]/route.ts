@@ -1,12 +1,26 @@
 import { handleErrors } from "@/src/shared/errors/handle-errors";
-import { replay } from "@/src/features/echo/services/echo";
+import { lookup } from "@/src/features/echo/services/echo";
+
+/** Route context for the catch-all: slug segments from the request path. */
+type EchoCatchAllContext = { params: Promise<{ slug: string[] }> };
+
+const lookupHandler = handleErrors<EchoCatchAllContext>(
+  async (_request, context) => {
+    const { slug } = await context.params;
+    return lookup(slug);
+  },
+);
 
 /**
- * Replays the most recently captured body with the exact `Content-Type` the
- * POST arrived with ("form data in → form data out"). Returns 404 until a
- * body has been captured.
+ * Returns the registered mock for the requested path.
+ *
+ * Every HTTP method performs the same exact-match lookup: the slug path is
+ * normalized (e.g. `/articles/1`) and resolved against the persisted registry.
+ * On a hit the response carries the entry's `data` with its `status_code`
+ * (default `200`); on a miss the handler returns `404 No mock registered`.
  */
-export const POST = handleErrors(async () => replay());
-export const PATCH = handleErrors(async () => replay());
-export const PUT = handleErrors(async () => replay());
-export const GET = handleErrors(async () => replay());
+export const GET = lookupHandler;
+export const POST = lookupHandler;
+export const PUT = lookupHandler;
+export const PATCH = lookupHandler;
+export const DELETE = lookupHandler;

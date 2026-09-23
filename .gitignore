@@ -20,6 +20,9 @@
 # production
 /build
 
+# runtime mock data (echo registry persistence)
+/data/
+
 # misc
 .DS_Store
 *.pem
