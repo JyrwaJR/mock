@@ -96,10 +96,6 @@ export function lookup(slug: string[]): Response {
     throw new NotFoundError(`No mock registered for "${url}"`);
   }
   const statusCode = entry.status_code ?? 200;
-  console.log({
-    url,
-    status_code: statusCode,
-  });
 
   return Response.json(entry.data, { status: statusCode });
 }
