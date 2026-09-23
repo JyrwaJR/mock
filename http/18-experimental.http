@@ -1,0 +1,89 @@
+# ============================================================
+# Experimental — migration, session log, terminal, persistent PTY.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+# ------------------------------------------------------------------
+# Migration
+# ------------------------------------------------------------------
+
+### Get migration status
+GET {{baseUrl}}/api/experimental/migration/v1
+
+# ------------------------------------------------------------------
+# Session experimental endpoints
+# ------------------------------------------------------------------
+
+### Read experimental session log
+GET {{baseUrl}}/api/experimental/session/{{sessionID}}/log
+
+### Read terminal output
+GET {{baseUrl}}/api/experimental/session/{{sessionID}}/terminal/read
+
+### Terminal operation (send keys / resize)
+POST {{baseUrl}}/api/experimental/session/{{sessionID}}/terminal
+Content-Type: application/json
+
+{
+  "action": "write",
+  "data": "ls\n"
+}
+
+# ------------------------------------------------------------------
+# Persistent PTY (long-lived terminal processes)
+# ------------------------------------------------------------------
+
+### Create persistent PTY
+POST {{baseUrl}}/api/experimental/persistent-pty
+Content-Type: application/json
+
+{
+  "command": "bash",
+  "args": [],
+  "cwd": "/tmp",
+  "cols": 80,
+  "rows": 24
+}
+
+### Get persistent PTY
+GET {{baseUrl}}/api/experimental/persistent-pty/{{ptyID}}
+
+### Update persistent PTY
+PUT {{baseUrl}}/api/experimental/persistent-pty/{{ptyID}}
+Content-Type: application/json
+
+{
+  "cols": 120,
+  "rows": 40
+}
+
+### Connect to persistent PTY
+POST {{baseUrl}}/api/experimental/persistent-pty/{{ptyID}}/connect
+Content-Type: application/json
+
+{
+  "cols": 80,
+  "rows": 24
+}
+
+### Remove persistent PTY
+DELETE {{baseUrl}}/api/experimental/persistent-pty/{{ptyID}}
+
+### Shutdown all persistent PTYs
+POST {{baseUrl}}/api/experimental/persistent-pty/shutdown
+Content-Type: application/json
+
+{}
+
+### Handoff persistent PTY (keep alive after client disconnects)
+POST {{baseUrl}}/api/experimental/persistent-pty/handoff
+Content-Type: application/json
+
+{
+  "ptyId": "some-pty-id"
+}
+
+### List persistent PTYs
+GET {{baseUrl}}/api/experimental/persistent-pty

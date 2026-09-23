@@ -1,0 +1,17 @@
+# ============================================================
+# Websearch — provider listing and web search.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List websearch providers
+GET {{baseUrl}}/api/websearch/provider
+
+### Search the web
+POST {{baseUrl}}/api/websearch
+Content-Type: application/json
+
+{
+  "query": "how to use MCP with OpenCode"
+}

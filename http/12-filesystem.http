@@ -1,0 +1,21 @@
+# ============================================================
+# Filesystem — read, list, and find files.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Read file
+GET {{baseUrl}}/api/fs/read/{{path}}
+# Replace {{path}} with a URL-encoded file path.
+# Example: GET http://localhost:4096/api/fs/read/package.json
+
+### List directory
+GET {{baseUrl}}/api/fs/list
+
+# Optional query params (uncomment as needed):
+# GET http://localhost:4096/api/fs/list?path=src&workspaceId=xxx
+
+### Find files
+GET {{baseUrl}}/api/fs/find
+# GET http://localhost:4096/api/fs/find?pattern=**/*.ts&path=src

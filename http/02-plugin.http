@@ -1,0 +1,31 @@
+# ============================================================
+# Plugin — Experimental plugin routes
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List plugins
+GET {{baseUrl}}/api/plugin
+
+### Wait for plugin activation
+POST {{baseUrl}}/api/plugin/await
+Content-Type: application/json
+
+{}
+
+### Check plugin updates
+POST {{baseUrl}}/api/plugin/check
+Content-Type: application/json
+
+{
+  "target": "opencode"
+}
+
+### Update plugins
+POST {{baseUrl}}/api/plugin/update
+Content-Type: application/json
+
+{
+  "targets": ["opencode"]
+}

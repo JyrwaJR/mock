@@ -1,0 +1,17 @@
+# ============================================================
+# RPC — call arbitrary methods on a running RPC server.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Call RPC method
+POST {{baseUrl}}/api/rpc/{{rpcID}}/{{method}}
+Content-Type: application/json
+
+{
+  "params": {}
+}
+
+# Replace {{rpcID}} and {{method}} with the actual RPC server id
+# and method name for the running tool.

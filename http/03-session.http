@@ -1,0 +1,305 @@
+# ============================================================
+# Session — the primary interaction API.
+# Docs: https://opencode.ai/v2/docs/api
+#
+# sessionID pattern: /^[a-zA-Z0-9-]{6,70}$/
+# Use a real session id (e.g. from List sessions) in place of {{sessionID}}.
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+# ------------------------------------------------------------------
+# Session CRUD
+# ------------------------------------------------------------------
+
+### List sessions
+GET {{baseUrl}}/api/session
+
+### Create session
+POST {{baseUrl}}/api/session
+Content-Type: application/json
+
+{
+  "data": {
+    "title": "My new session"
+  }
+}
+
+### Get session statistics
+GET {{baseUrl}}/api/session/stats
+
+### Import session
+POST {{baseUrl}}/api/session/import
+Content-Type: application/json
+
+{
+  "info": {
+    "id": "session-id",
+    "title": "Imported session"
+  },
+  "data": {}
+}
+
+### Export session
+GET {{baseUrl}}/api/session/{{sessionID}}/export
+
+### List active sessions
+GET {{baseUrl}}/api/session/active
+
+### Get session
+GET {{baseUrl}}/api/session/{{sessionID}}
+
+### Delete session
+DELETE {{baseUrl}}/api/session/{{sessionID}}
+
+### Fork session
+POST {{baseUrl}}/api/session/{{sessionID}}/fork
+Content-Type: application/json
+
+{
+  "boundary": "step"
+}
+
+### Switch session agent
+POST {{baseUrl}}/api/session/{{sessionID}}/agent
+Content-Type: application/json
+
+{
+  "agent": "build"
+}
+
+### Switch session model
+POST {{baseUrl}}/api/session/{{sessionID}}/model
+Content-Type: application/json
+
+{
+  "model": "gpt-4o"
+}
+
+### Rename session
+POST {{baseUrl}}/api/session/{{sessionID}}/rename
+Content-Type: application/json
+
+{
+  "title": "New session title"
+}
+
+### Move session
+POST {{baseUrl}}/api/session/{{sessionID}}/move
+Content-Type: application/json
+
+{
+  "directory": "/some/workspace/path",
+  "workspaceId": "optional-workspace-id"
+}
+
+# ------------------------------------------------------------------
+# Interact with a session
+# ------------------------------------------------------------------
+
+### Send message (prompt the agent)
+POST {{baseUrl}}/api/session/{{sessionID}}/prompt
+Content-Type: application/json
+
+{
+  "id": "optional-user-message-id",
+  "data": {
+    "type": "user",
+    "text": "Explain the codebase in a few sentences."
+  }
+}
+
+### Run a command in the session
+POST {{baseUrl}}/api/session/{{sessionID}}/command
+Content-Type: application/json
+
+{
+  "command": "/fix",
+  "text": "",
+  "files": []
+}
+
+### Activate a skill in the session
+POST {{baseUrl}}/api/session/{{sessionID}}/skill
+Content-Type: application/json
+
+{
+  "id": "skill-name"
+}
+
+### Add a synthetic message
+POST {{baseUrl}}/api/session/{{sessionID}}/synthetic
+Content-Type: application/json
+
+{
+  "id": "optional-synthetic-id",
+  "data": {
+    "type": "assistant"
+  }
+}
+
+### Run a shell command in the session
+POST {{baseUrl}}/api/session/{{sessionID}}/shell
+Content-Type: application/json
+
+{
+  "id": "optional-shell-command-id"
+}
+
+# ------------------------------------------------------------------
+# Session lifecycle
+# ------------------------------------------------------------------
+
+### Compact session
+POST {{baseUrl}}/api/session/{{sessionID}}/compact
+Content-Type: application/json
+
+{
+  "id": "optional-compact-id",
+  "data": {}
+}
+
+### Wait for session (block until idle)
+POST {{baseUrl}}/api/session/{{sessionID}}/wait
+Content-Type: application/json
+
+{}
+
+### Interrupt session execution
+POST {{baseUrl}}/api/session/{{sessionID}}/interrupt
+Content-Type: application/json
+
+{}
+
+### Background blocking session tools
+POST {{baseUrl}}/api/session/{{sessionID}}/background
+Content-Type: application/json
+
+{}
+
+# ------------------------------------------------------------------
+# Revert (undo staged changes)
+# ------------------------------------------------------------------
+
+### Stage session revert
+POST {{baseUrl}}/api/session/{{sessionID}}/revert/stage
+Content-Type: application/json
+
+{
+  "message": "Without this change"
+}
+
+### Clear staged revert
+POST {{baseUrl}}/api/session/{{sessionID}}/revert/clear
+Content-Type: application/json
+
+{}
+
+### Commit staged revert
+POST {{baseUrl}}/api/session/{{sessionID}}/revert/commit
+Content-Type: application/json
+
+{}
+
+# ------------------------------------------------------------------
+# Context, inbox, instructions
+# ------------------------------------------------------------------
+
+### Get session context
+GET {{baseUrl}}/api/session/{{sessionID}}/context
+
+### List session inbox (queued / pending tasks)
+GET {{baseUrl}}/api/session/{{sessionID}}/inbox
+
+### Cancel inbox input
+DELETE {{baseUrl}}/api/session/{{sessionID}}/inbox/{{inboxID}}
+
+### Steer queued item (change its direction)
+POST {{baseUrl}}/api/session/{{sessionID}}/inbox/{{inboxID}}/steer
+Content-Type: application/json
+
+{
+  "data": {
+    "type": "user",
+    "text": "Actually, do this instead."
+  }
+}
+
+### Queue a steered item
+POST {{baseUrl}}/api/session/{{sessionID}}/inbox/{{inboxID}}/queue
+Content-Type: application/json
+
+{
+  "data": {
+    "type": "user",
+    "text": "Queued task"
+  }
+}
+
+### List instruction entries
+GET {{baseUrl}}/api/session/{{sessionID}}/instructions/entries
+
+### Put instruction entry
+PUT {{baseUrl}}/api/session/{{sessionID}}/instructions/entries/{{key}}
+Content-Type: application/json
+
+{
+  "value": "Run tests after every change."
+}
+
+### Remove instruction entry
+DELETE {{baseUrl}}/api/session/{{sessionID}}/instructions/entries/{{key}}
+
+# ------------------------------------------------------------------
+# Generate / messages
+# ------------------------------------------------------------------
+
+### Generate text from session context
+POST {{baseUrl}}/api/session/{{sessionID}}/generate
+Content-Type: application/json
+
+{
+  "text": "Summarize the current state of this session",
+  "context": {}
+}
+
+### Read the session log (SSE)
+GET {{baseUrl}}/api/session/{{sessionID}}/log
+Accept: text/event-stream
+
+### Get session messages
+GET {{baseUrl}}/api/session/{{sessionID}}/message
+
+### Get a specific message
+GET {{baseUrl}}/api/session/{{sessionID}}/message/{{messageID}}
+
+### Update assistant message content
+PATCH {{baseUrl}}/api/session/{{sessionID}}/message/{{messageID}}
+Content-Type: application/json
+
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Updated assistant reply"
+    }
+  ]
+}
+
+### Set session environment
+PUT {{baseUrl}}/api/session/{{sessionID}}/environment
+Content-Type: application/json
+
+{
+  "env": {
+    "EDITOR": "code"
+  }
+}
+
+### View session (render snapshot)
+POST {{baseUrl}}/api/session/{{sessionID}}/view
+Content-Type: application/json
+
+{
+  "mode": "full"
+}

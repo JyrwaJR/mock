@@ -1,0 +1,31 @@
+# ============================================================
+# Worktree — manage isolated working directories.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Create worktree
+POST {{baseUrl}}/api/worktree/{{projectID}}/create
+Content-Type: application/json
+
+{
+  "name": "feature/my-new-branch"
+}
+
+### List worktrees
+GET {{baseUrl}}/api/worktree/{{projectID}}
+
+### Refresh worktree
+POST {{baseUrl}}/api/worktree/{{projectID}}/refresh
+Content-Type: application/json
+
+{}
+
+### Remove worktree
+DELETE {{baseUrl}}/api/worktree/{{projectID}}/remove
+Content-Type: application/json
+
+{
+  "name": "feature/my-new-branch"
+}

@@ -1,0 +1,15 @@
+# ============================================================
+# Agent — Manage & list agents
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List agents
+GET {{baseUrl}}/api/agent
+
+### Get a specific agent
+GET {{baseUrl}}/api/agent/{{agentID}}
+
+# Replace {{agentID}} with an actual agent id, e.g. "build".
+# GET http://localhost:4096/api/agent/build

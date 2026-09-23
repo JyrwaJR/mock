@@ -1,0 +1,21 @@
+# ============================================================
+# VCS — version control / git status.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Get VCS base commit
+GET {{baseUrl}}/api/vcs/base
+
+### Get VCS status
+GET {{baseUrl}}/api/vcs/status
+
+### Get VCS branches
+GET {{baseUrl}}/api/vcs/branches
+
+### Get VCS diff
+GET {{baseUrl}}/api/vcs/diff
+
+# Optional query params:
+# GET http://localhost:4096/api/vcs/diff?file=src/index.ts

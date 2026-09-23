@@ -1,0 +1,80 @@
+# ============================================================
+# Integration — OAuth / Key / Command connections to third-party services.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List integrations
+GET {{baseUrl}}/api/integration
+
+### Get integration
+GET {{baseUrl}}/api/integration/{{integrationID}}
+
+# Replace {{integrationID}} with a real id, e.g. "github", "gitlab".
+# GET http://localhost:4096/api/integration/github
+
+### Add wellknown integration
+POST {{baseUrl}}/api/experimental/integration/wellknown
+Content-Type: application/json
+
+{
+  "id": "github"
+}
+
+# ------------------------------------------------------------------
+# Connect with API Key
+# ------------------------------------------------------------------
+
+### Connect with key
+POST {{baseUrl}}/api/integration/{{integrationID}}/connect/key
+Content-Type: application/json
+
+{
+  "key": "ghp_xxxxxxxxxxxxxxxxxxxx"
+}
+
+# ------------------------------------------------------------------
+# Connect via OAuth
+# ------------------------------------------------------------------
+
+### Begin OAuth connection
+POST {{baseUrl}}/api/integration/{{integrationID}}/connect/oauth
+Content-Type: application/json
+
+{
+  "name": "My GitHub connection"
+}
+
+### Get OAuth attempt status
+GET {{baseUrl}}/api/integration/{{integrationID}}/connect/oauth/{{attemptID}}
+
+### Cancel OAuth connection
+DELETE {{baseUrl}}/api/integration/{{integrationID}}/connect/oauth/{{attemptID}}
+
+### Complete OAuth connection
+POST {{baseUrl}}/api/integration/{{integrationID}}/connect/oauth/{{attemptID}}/complete
+Content-Type: application/json
+
+{
+  "redirectUrl": "http://localhost:4096/callback?code=xxx&state=yyy"
+}
+
+# ------------------------------------------------------------------
+# Connect via CLI command
+# ------------------------------------------------------------------
+
+### Begin command connection
+POST {{baseUrl}}/api/integration/{{integrationID}}/connect/command
+Content-Type: application/json
+
+{
+  "command": "gh auth login",
+  "name": "GitHub CLI"
+}
+
+### Get command attempt status
+GET {{baseUrl}}/api/integration/{{integrationID}}/connect/command/{{attemptID}}
+
+### Cancel command connection
+DELETE {{baseUrl}}/api/integration/{{integrationID}}/connect/command/{{attemptID}}

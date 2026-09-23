@@ -1,0 +1,15 @@
+# ============================================================
+# Command & Skill — list available slash-commands and skills.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List commands
+GET {{baseUrl}}/api/command
+
+### List skills
+GET {{baseUrl}}/api/skill
+
+### List references (CLI flags, opencode instructions, docs)
+GET {{baseUrl}}/api/reference

@@ -1,0 +1,37 @@
+# ============================================================
+# MCP — manage MCP (Model Context Protocol) servers.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List MCP servers
+GET {{baseUrl}}/api/mcp
+
+### Add MCP server
+PUT {{baseUrl}}/api/mcp/{{server}}
+Content-Type: application/json
+
+{
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+  "type": "stdio"
+}
+
+### Remove MCP server
+DELETE {{baseUrl}}/api/mcp/{{server}}
+
+### Connect MCP server
+POST {{baseUrl}}/api/mcp/{{server}}/connect
+Content-Type: application/json
+
+{}
+
+### Disconnect MCP server
+POST {{baseUrl}}/api/mcp/{{server}}/disconnect
+Content-Type: application/json
+
+{}
+
+### List MCP resources
+GET {{baseUrl}}/api/mcp/resource

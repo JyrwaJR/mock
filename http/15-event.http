@@ -1,0 +1,10 @@
+# ============================================================
+# Event — subscribe to real-time server-sent events (SSE).
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Subscribe to events
+GET {{baseUrl}}/api/event
+Accept: text/event-stream

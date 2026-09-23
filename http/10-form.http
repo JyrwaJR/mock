@@ -1,0 +1,44 @@
+# ============================================================
+# Form — session form requests (prompts / structured inputs).
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List pending form requests (global)
+GET {{baseUrl}}/api/form/request
+
+### List session forms
+GET {{baseUrl}}/api/session/{{sessionID}}/form
+
+### Create session form
+POST {{baseUrl}}/api/session/{{sessionID}}/form
+Content-Type: application/json
+
+{
+  "data": {
+    "title": "Auth password prompt",
+    "type": "text",
+    "default": ""
+  }
+}
+
+### Get session form
+GET {{baseUrl}}/api/session/{{sessionID}}/form/{{formID}}
+
+### Reply to session form
+POST {{baseUrl}}/api/session/{{sessionID}}/form/{{formID}}/reply
+Content-Type: application/json
+
+{
+  "value": "my-password-here"
+}
+
+### Cancel form
+POST {{baseUrl}}/api/session/{{sessionID}}/form/{{formID}}/cancel
+Content-Type: application/json
+
+{}
+
+### Get form state
+GET {{baseUrl}}/api/session/{{sessionID}}/form/{{formID}}/state

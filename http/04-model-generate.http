@@ -1,0 +1,26 @@
+# ============================================================
+# Model & Generate — listing models and generating text.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List models
+GET {{baseUrl}}/api/model
+
+### Get default model
+GET {{baseUrl}}/api/model/default
+
+### Generate text
+POST {{baseUrl}}/api/generate
+Content-Type: application/json
+
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello"
+    }
+  ],
+  "model": "gpt-4o"
+}

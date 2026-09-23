@@ -1,0 +1,44 @@
+# ============================================================
+# PTY — manage pseudo-terminal sessions.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Create PTY
+POST {{baseUrl}}/api/pty
+Content-Type: application/json
+
+{
+  "command": "bash",
+  "args": [],
+  "cwd": "/tmp",
+  "env": {}
+}
+
+### List PTYs
+GET {{baseUrl}}/api/pty
+
+### Get PTY
+GET {{baseUrl}}/api/pty/{{ptyID}}
+
+### Update PTY (resize / change env)
+PUT {{baseUrl}}/api/pty/{{ptyID}}
+Content-Type: application/json
+
+{
+  "cols": 80,
+  "rows": 24
+}
+
+### Remove PTY
+DELETE {{baseUrl}}/api/pty/{{ptyID}}
+
+### Connect to PTY
+POST {{baseUrl}}/api/pty/{{ptyID}}/connect
+Content-Type: application/json
+
+{
+  "cols": 80,
+  "rows": 24
+}

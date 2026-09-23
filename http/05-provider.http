@@ -1,0 +1,15 @@
+# ============================================================
+# Provider — list and query AI providers.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List providers
+GET {{baseUrl}}/api/provider
+
+### Get provider
+GET {{baseUrl}}/api/provider/{{providerID}}
+
+# Replace {{providerID}} with a real provider id, e.g. "openai", "anthropic".
+# GET http://localhost:4096/api/provider/openai

@@ -1,0 +1,21 @@
+# ============================================================
+# Project — project-level management.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List projects
+GET {{baseUrl}}/api/project
+
+### Update project
+PATCH {{baseUrl}}/api/project/{{projectID}}
+Content-Type: application/json
+
+{
+  "title": "My project",
+  "path": "/path/to/project"
+}
+
+### Get current project
+GET {{baseUrl}}/api/project/current

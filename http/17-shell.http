@@ -1,0 +1,36 @@
+# ============================================================
+# Shell — manage and run shell commands (exec).
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Run shell command
+POST {{baseUrl}}/api/shell
+Content-Type: application/json
+
+{
+  "command": "ls -la",
+  "cwd": "/tmp",
+  "timeout": 5000
+}
+
+### List shell processes
+GET {{baseUrl}}/api/shell
+
+### Get shell process
+GET {{baseUrl}}/api/shell/{{id}}
+
+### Remove shell process
+DELETE {{baseUrl}}/api/shell/{{id}}
+
+### Read shell output
+GET {{baseUrl}}/api/shell/{{id}}/output
+
+### Update shell timeout
+PATCH {{baseUrl}}/api/shell/{{id}}/timeout
+Content-Type: application/json
+
+{
+  "timeout": 10000
+}

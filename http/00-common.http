@@ -1,0 +1,19 @@
+# ============================================================
+# OpenCode API — Common / Shared
+# Base URL: http://localhost:4096 (local OpenCode server)
+# Docs:     https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### Health — Check server health
+GET {{baseUrl}}/api/health
+
+### Server — Get server information
+GET {{baseUrl}}/api/server
+
+### Location — Get current location (paths to config/sessions)
+GET {{baseUrl}}/api/location
+
+### Config — Get OpenCode config
+GET {{baseUrl}}/api/config

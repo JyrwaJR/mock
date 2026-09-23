@@ -1,0 +1,40 @@
+# ============================================================
+# Permission — request / grant / deny tool permissions.
+# Docs: https://opencode.ai/v2/docs/api
+# ============================================================
+
+@baseUrl = http://localhost:4096
+
+### List permission requests (global)
+GET {{baseUrl}}/api/permission/request
+
+### List saved permissions
+GET {{baseUrl}}/api/permission/saved
+
+### Remove saved permission
+DELETE {{baseUrl}}/api/permission/saved/{{id}}
+
+### Create permission request (in a session)
+POST {{baseUrl}}/api/session/{{sessionID}}/permission
+Content-Type: application/json
+
+{
+  "tool": "bash",
+  "input": {
+    "command": "rm -rf build/"
+  }
+}
+
+### List session permission requests
+GET {{baseUrl}}/api/session/{{sessionID}}/permission
+
+### Get permission request
+GET {{baseUrl}}/api/session/{{sessionID}}/permission/{{requestID}}
+
+### Reply to permission request
+POST {{baseUrl}}/api/session/{{sessionID}}/permission/{{requestID}}/reply
+Content-Type: application/json
+
+{
+  "decision": "grant"
+}
