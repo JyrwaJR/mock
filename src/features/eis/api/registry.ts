@@ -16,6 +16,7 @@ export const CURRENT_MOCK: Record<RpcMethod, number> = {
   get_leave_reason: 0,
   get_leave_type: 0,
   insert_update_leave: 0,
+  insert_ge_no: 0,
   get_announcements: 0,
   get_employee_tax_list: 0,
   get_employee_tax_detail: 0,

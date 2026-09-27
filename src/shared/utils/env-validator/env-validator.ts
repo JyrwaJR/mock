@@ -19,11 +19,9 @@ export function validateEnv<T extends z.ZodRawShape>(
 export const nextAuthEnvSchema = createEnvSchema({
   NEXTAUTH_SECRET: z.string().min(1, 'NEXTAUTH_SECRET is required'),
   NEXTAUTH_URL: z.string().url('NEXTAUTH_URL must be a valid URL'),
-  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
 });
 
 export const expressEnvSchema = createEnvSchema({
-  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });

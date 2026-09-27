@@ -1,8 +1,8 @@
 /**
  * @file Pagination parameter builder for database queries.
  *
- * Computes `skip` and `take` values for Prisma / TypeORM paginated queries
- * based on the current page and the project-wide `PAGE_SIZE` constant.
+ * Computes `skip` and `take` values for paginated queries based on the
+ * current page and the project-wide `PAGE_SIZE` constant.
  */
 
 import { PAGE_SIZE } from '@/src/shared/utils/constants/common';
