@@ -4,7 +4,13 @@ import {
 } from "@/src/shared/errors/http-errors";
 import type { EchoBody } from "@/src/features/echo/validators";
 import type { EchoEntry } from "@/src/features/echo/types";
-import { DEFAULT_ENTRY_KEY, getAllEntries, getEntry, setEntry } from "./store";
+import {
+  DEFAULT_ENTRY_KEY,
+  getAllEntries,
+  getEntry,
+  resetStore,
+  setEntry,
+} from "./store";
 
 /**
  * Maximum accepted registration size in UTF-8 bytes. Keeps the in-memory
@@ -108,4 +114,22 @@ export function lookup(slug: string[]): Response {
  */
 export function list(): Response {
   return Response.json(getAllEntries(), { status: 200 });
+}
+
+/**
+ * Clears the whole registry: every registered mock — including the default
+ * fallback entry — is removed, and the persisted JSON file is deleted.
+ *
+ * Counts the entries *before* clearing so the response can report how many were
+ * dropped. Clearing an already empty registry is not an error: it returns
+ * `200` with `cleared: 0`, making the call idempotent and safe to repeat in
+ * setup/teardown scripts.
+ *
+ * @returns A `200` JSON response shaped `{ cleared: number }`, where `cleared`
+ *   is the number of entries that existed immediately before the clear.
+ */
+export function clear(): Response {
+  const cleared = Object.keys(getAllEntries()).length;
+  resetStore();
+  return Response.json({ cleared }, { status: 200 });
 }

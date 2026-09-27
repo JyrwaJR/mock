@@ -1,7 +1,7 @@
 import { handleErrors } from "@/src/shared/errors/handle-errors";
 import { withValidation } from "@/src/shared/utils/with-validation/with-validation";
 import { EchoBodySchema } from "@/src/features/echo/validators";
-import { list, register } from "@/src/features/echo/services/echo";
+import { list, register, clear } from "@/src/features/echo/services/echo";
 
 /**
  * Registers a mock and echoes its `data` back.
@@ -27,3 +27,16 @@ export const POST = withValidation(
  * server sessions (loaded from the JSON file on first access).
  */
 export const GET = handleErrors(async () => list());
+
+/**
+ * Clears every registered mock.
+ *
+ * Drops all entries from the registry — including the default fallback
+ * registered without a `url` — and deletes the persisted
+ * `data/echo/registry.json` file, so nothing survives a server restart. This is
+ * the reset switch for the mock registry: after it, `GET /api/echo` returns
+ * `{}` and every `/api/echo/<url>` lookup answers `404`. The response reports
+ * how many entries were dropped as `{ "cleared": n }`; clearing an already
+ * empty registry is a no-op that still returns `200`.
+ */
+export const DELETE = handleErrors(async () => clear());

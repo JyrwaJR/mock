@@ -168,7 +168,8 @@ Authorization: Bearer <token>
 # entry's data with its status code. Submitting a body without
 # a `url` registers the default fallback, which is returned for
 # any path with no exact match. Entries persist in
-# data/echo/registry.json across server restarts.
+# data/echo/registry.json across server restarts. DELETE
+# /api/echo clears every entry and deletes that file.
 # ============================================================
 
 ### Echo — register the default fallback (no url; echoes data back and stores it)
@@ -216,6 +217,9 @@ POST {{baseUrl}}/api/echo/articles/1
 
 ### Echo — unmatched path falls back to the url-less default entry
 GET {{baseUrl}}/api/echo/missing
+
+### Echo — clear ALL registered data (resets the registry; returns {"cleared": n})
+DELETE {{baseUrl}}/api/echo
 
 # ============================================================
 # Health (/api/health) — unauthenticated liveness probe.
