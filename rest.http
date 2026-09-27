@@ -217,3 +217,13 @@ POST {{baseUrl}}/api/echo/articles/1
 ### Echo — unmatched path falls back to the url-less default entry
 GET {{baseUrl}}/api/echo/missing
 
+# ============================================================
+# Health (/api/health) — unauthenticated liveness probe.
+# Returns 200 with { status, uptime, timestamp } while the
+# process can serve requests. No auth required.
+# ============================================================
+
+### Health — server liveness probe
+GET {{baseUrl}}/api/health
+Accept: application/json
+
