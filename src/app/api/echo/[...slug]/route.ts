@@ -1,12 +1,20 @@
 import { handleErrors } from "@/src/shared/errors/handle-errors";
 import { lookup } from "@/src/features/echo/services/echo";
+import { writeToFile } from "@/src/shared/utils/helpers/write-to-file";
 
 /** Route context for the catch-all: slug segments from the request path. */
 type EchoCatchAllContext = { params: Promise<{ slug: string[] }> };
 
 const lookupHandler = handleErrors<EchoCatchAllContext>(
-  async (_request, context) => {
+  async (request, context) => {
     const { slug } = await context.params;
+    const write = request.nextUrl.searchParams.get("write") === "true";
+    if (write) {
+      const url = request.nextUrl;
+      const body = await request.json();
+      writeToFile(body, url.pathname);
+    }
+
     return lookup(slug);
   },
 );

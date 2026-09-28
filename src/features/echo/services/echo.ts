@@ -98,12 +98,19 @@ export function register(body: EchoBody): Response {
 export function lookup(slug: string[]): Response {
   const url = normalizeUrl(`/${slug.join("/")}`);
   const entry = getEntry(url) ?? getEntry(DEFAULT_ENTRY_KEY);
+
   if (!entry) {
     throw new NotFoundError(`No mock registered for "${url}"`);
   }
   const statusCode = entry.status_code ?? 200;
 
-  return Response.json(entry.data, { status: statusCode });
+  return Response.json(
+    {
+      data: entry.data,
+      message: statusCode === 200 ? "Success" : "Error",
+    },
+    { status: statusCode },
+  );
 }
 
 /**
