@@ -3,3 +3,4 @@ export * from "./types";
 export * from "./validators";
 export * from "./services/store";
 export * from "./services/echo";
+export * from "./services/payload";

@@ -8,7 +8,6 @@ export function handleErrors<T>(handler: RouteHandler<T>) {
     try {
       return await handler(request, context);
     } catch (error) {
-      console.log("ECHO Error:", error);
       const normalizeError = normalizeUnknownError(error);
       return NextResponse.json(
         {

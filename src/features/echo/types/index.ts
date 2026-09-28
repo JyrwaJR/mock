@@ -40,3 +40,13 @@ export type EchoEntry = {
  * to its {@link EchoEntry} (`{ data, status_code }`).
  */
 export type EchoRegistry = Record<string, EchoEntry>;
+
+/**
+ * The persisted payload store: maps a normalized request path (e.g.
+ * `/facial_registration`) to the raw JSON value captured for it.
+ *
+ * Unlike {@link EchoRegistry}, whose entries are `{ data, status_code }`
+ * objects, each value here is stored verbatim as it was received, so any JSON
+ * value is legal — including `null` and arrays.
+ */
+export type PayloadRegistry = Record<string, unknown>;

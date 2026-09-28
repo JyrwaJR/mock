@@ -170,6 +170,14 @@ Authorization: Bearer <token>
 # any path with no exact match. Entries persist in
 # data/echo/registry.json across server restarts. DELETE
 # /api/echo clears every entry and deletes that file.
+#
+# A second, independent store captures request bodies. Append
+# ?write=true to any /api/echo/<path> request to capture that
+# request's body; payloads live in data/echo/payload.json and
+# survive restarts the same way. GET /api/echo/payload returns
+# every captured payload keyed by path, and DELETE
+# /api/echo/payload clears them all, returning { "cleared": n }.
+# Clearing one store leaves the other untouched.
 # ============================================================
 
 ### Echo — register the default fallback (no url; echoes data back and stores it)
@@ -220,6 +228,19 @@ GET {{baseUrl}}/api/echo/missing
 
 ### Echo — clear ALL registered data (resets the registry; returns {"cleared": n})
 DELETE {{baseUrl}}/api/echo
+
+### Echo — capture the request payload (?write=true; same on GET/PUT/PATCH/DELETE)
+# The response is the registry lookup, not the capture.
+POST {{baseUrl}}/api/echo/articles/1?write=true
+Content-Type: application/json
+
+{ "title": "Hello" }
+
+### Echo — list all captured payloads
+GET {{baseUrl}}/api/echo/payload
+
+### Echo — clear ALL captured payloads (returns {"cleared": n})
+DELETE {{baseUrl}}/api/echo/payload
 
 # ============================================================
 # Health (/api/health) — unauthenticated liveness probe.
