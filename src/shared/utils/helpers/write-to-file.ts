@@ -1,8 +1,24 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+const override = process.env.ECHO_REGISTRY_FILE;
+
+function normalizeUrl(url: string): string {
+  const prefix = "/api/echo";
+
+  if (url.startsWith(prefix)) {
+    url = url.slice(prefix.length);
+  }
+
+  return url.startsWith("/") ? url : `/${url}`;
+}
+
 export async function writeToFile(value: unknown, url: string = "/") {
-  const filePath = path.join(process.cwd(), "data", "request", "payload.json");
+  let filePath = path.join(process.cwd(), "data", "echo", "payload.json");
+
+  if (override) {
+    filePath = path.join(override, "payload.json");
+  }
 
   // 1. Ensure directory exists
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -20,7 +36,7 @@ export async function writeToFile(value: unknown, url: string = "/") {
   }
 
   // 3. Format the URL key (ensures a leading slash e.g., "/facial_registration")
-  const urlKey = url.startsWith("/") ? url : `/${url}`;
+  const urlKey = normalizeUrl(url.startsWith("/") ? url : `/${url}`);
 
   // 4. Assign or overwrite the endpoint key with the new payload
   existingData[urlKey] = value;

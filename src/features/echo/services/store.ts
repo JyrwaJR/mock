@@ -1,4 +1,10 @@
-import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 
 import type { EchoEntry, EchoRegistry } from "@/src/features/echo/types";
@@ -34,8 +40,9 @@ type EchoStore = {
  */
 function registryFilePath(): string {
   const override = process.env.ECHO_REGISTRY_FILE;
+
   if (override) {
-    return override;
+    return path.join(override, "registry.json");
   }
   // Statically scoped under the project `data/` dir so Turbopack's trace
   // analysis does not pull the whole project into the server bundle.
