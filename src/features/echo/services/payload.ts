@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -110,11 +111,49 @@ async function loadFromFile(filePath: string): Promise<PayloadRegistry> {
 }
 
 /**
+ * Tail of the in-process write queue.
+ *
+ * `writePayload` is a read-modify-write cycle: it loads the whole registry,
+ * merges one key, and writes the result back. Run concurrently, each call
+ * would load a snapshot taken before its neighbours wrote and then persist
+ * only its own key, so captures aimed at *different* paths would silently
+ * discard one another. Chaining the cycles through this promise makes each one
+ * observe the previous one's result.
+ *
+ * Scoped to the process on purpose — a mock server is a single Node process,
+ * and a cross-process lock would buy nothing here.
+ */
+let writeChain: Promise<void> = Promise.resolve();
+
+/**
+ * Runs `task` after every write already queued, and queues it for the ones
+ * that follow.
+ *
+ * A rejected task must not stall the queue, so the chain is advanced past the
+ * failure while the caller still receives the original rejection.
+ */
+function enqueueWrite(task: () => Promise<void>): Promise<void> {
+  const result = writeChain.then(task);
+  writeChain = result.then(
+    () => undefined,
+    () => undefined,
+  );
+  return result;
+}
+
+/**
  * Atomically writes the whole payload registry to the JSON file.
  *
- * Writes to a sibling `.tmp` file first, then renames it over the target so a
+ * Writes to a sibling temp file first, then renames it over the target so a
  * crash mid-write can never leave a truncated file behind. Creates parent
  * directories as needed.
+ *
+ * The temp name carries a random suffix rather than a fixed `.tmp`: two
+ * captures dispatched concurrently would otherwise share one temp path, and
+ * the loser's `rename` would fail with `ENOENT` while the two interleaved
+ * writes could produce a file that no longer parses — which reads back as an
+ * empty store, silently discarding every capture. A unique name per write
+ * makes concurrent writes independent, leaving a benign last-writer-wins.
  *
  * @param filePath - Absolute path of the payload JSON file to write.
  * @param registry - The full registry to serialize.
@@ -124,9 +163,16 @@ async function persist(
   registry: PayloadRegistry,
 ): Promise<void> {
   await mkdir(path.dirname(filePath), { recursive: true });
-  const tmpPath = `${filePath}.tmp`;
-  await writeFile(tmpPath, JSON.stringify(registry, null, 2), "utf8");
-  await rename(tmpPath, filePath);
+  const tmpPath = `${filePath}.${randomUUID()}.tmp`;
+  try {
+    await writeFile(tmpPath, JSON.stringify(registry, null, 2), "utf8");
+    await rename(tmpPath, filePath);
+  } catch (error) {
+    // The rename is atomic, so a failure here leaves the live store intact.
+    // Drop the orphan so repeated failures cannot accumulate temp files.
+    await rm(tmpPath, { force: true }).catch(() => undefined);
+    throw error;
+  }
 }
 
 /**
@@ -137,6 +183,9 @@ async function persist(
  * key is preserved. An unparseable existing file is warned about and treated
  * as empty rather than raising.
  *
+ * Concurrent calls are serialized within the process, so captures racing for
+ * the store each observe their predecessors and none is silently dropped.
+ *
  * @param url - Request path or slug to key the payload by. Defaults to `/`.
  * @param value - The captured payload, stored verbatim.
  */
@@ -145,11 +194,13 @@ export async function writePayload(
   url: string = "/",
 ): Promise<void> {
   const filePath = payloadFilePath();
-  const registry = await loadFromFile(filePath);
+  const key = normalizePayloadKey(url);
 
-  registry[normalizePayloadKey(url)] = value;
-
-  await persist(filePath, registry);
+  return enqueueWrite(async () => {
+    const registry = await loadFromFile(filePath);
+    registry[key] = value;
+    await persist(filePath, registry);
+  });
 }
 
 /**

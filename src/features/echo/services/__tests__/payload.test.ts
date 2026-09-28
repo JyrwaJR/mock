@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -303,5 +303,40 @@ describe("lazy environment resolution", () => {
     expect(await getPayload("/second")).toEqual({ from: "second" });
     expect(await getPayload("/first")).toBeUndefined();
     expect(existsSync(path.join(dataDir, "payload.json"))).toBe(true);
+  });
+});
+
+describe("concurrent writes", () => {
+  // A fixed `.tmp` name made concurrent captures collide: both wrote the same
+  // path, so one `rename` lost its source and the interleaved writes could
+  // leave a file that no longer parsed — which reads back as an empty store,
+  // i.e. every capture silently discarded. Assert the store survives.
+  it("keeps the store parseable when captures are dispatched together", async () => {
+    const keys = Array.from({ length: 12 }, (_, i) => `/concurrent-${i}`);
+
+    await Promise.all(
+      keys.map((key, i) => writePayload({ n: i }, key)),
+    );
+
+    // The whole point: the file must still parse, not degrade to {}.
+    expect(existsSync(path.join(dataDir, "payload.json"))).toBe(true);
+    expect(await readPayloads()).not.toEqual({});
+
+    // Last-writer-wins per key is the accepted outcome; no key may be stored
+    // under a wrong or partial value.
+    for (const [i, key] of keys.entries()) {
+      expect(await getPayload(key)).toEqual({ n: i });
+    }
+  });
+
+  it("leaves no temp files behind after concurrent writes settle", async () => {
+    await Promise.all([
+      writePayload({ n: 1 }, "/a"),
+      writePayload({ n: 2 }, "/b"),
+      writePayload({ n: 3 }, "/c"),
+    ]);
+
+    const leftovers = readdirSync(dataDir).filter((f) => f !== "payload.json");
+    expect(leftovers).toEqual([]);
   });
 });
