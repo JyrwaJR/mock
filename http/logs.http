@@ -1,0 +1,26 @@
+@baseUrl=http://localhost:3000
+
+### Write a batch of logs
+POST {{baseUrl}}/api/logs
+Content-Type: application/json
+
+[
+  {
+    "app": "pensioners",
+    "type": "info",
+    "message": "User logged in",
+    "content": { "userId": "u_123" }
+  },
+  {
+    "app": "pensioners",
+    "type": "error",
+    "message": "Failed to load statement",
+    "content": { "status": 500 }
+  }
+]
+
+### Read all logs
+GET {{baseUrl}}/api/logs
+
+### Clear all logs
+DELETE {{baseUrl}}/api/logs
