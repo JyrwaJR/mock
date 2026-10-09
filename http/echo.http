@@ -1,0 +1,67 @@
+@baseUrl=http://192.168.1.9:3000
+
+### --------------------------------------------
+### Encrypt helper
+# -------------- Pre Script -------------------------
+
+POST {{baseUrl}}/api/cpps/encrypt
+
+{
+  "message":"Success",
+  "data": {
+  "app_date": "2026-09-15",
+  "app_exp": "2027-09-15",
+  "bank_accno": "000000000000",
+  "dob": "1962-04-18",
+  "gender": "M",
+  "member_id": "TEST-MEMBER-001",
+  "mtype": "P",
+  "pclass": "Regular",
+  "pclass_cd": "01",
+  "photo": null,
+  "pname": "Test Pensioner",
+  "ppo_id": "TEST-PPO-001",
+  "ppo_no": "TEST-PPO-001",
+  "ptype_cd": "01",
+  "rela": "Self",
+  "trea_code": "SHL",
+  "treasury_name": "Shillong Treasury",
+  "pan_dob": "1962-04-18",
+  "pan_no": "TESTPAN000",
+  "height": "170",
+  "mobile_no": "0000000000",
+  "comty_cd": "01",
+  "marital_cd": "M",
+  "email": "test@example.com"
+}
+}
+
+# -------------- Post Script -------------------------
+
+
+### Decrypt helper
+POST {{baseUrl}}/api/cpps/decrypt?write=true
+
+{
+  "payload": "gAAAAABqprL2L698jZiFUdPl7G_gpYuuapmLZRigGIkvgc1IazB4ihZRj2LllGt4WfVbcxNyZ1l5B0ctncp8I7y8Zs3ny-V9vpCBory21HTiPzQWNDkDTDBUC9xBMYvOS4kFDSjdxdkHQIZzdLctl6Rzoum1mOHd9wNZW9JAD47XNEX19qr5tvM="
+}
+
+
+### format-password helper
+POST {{baseUrl}}/api/cpps/format-password
+
+{
+  "password": ""
+}
+
+### echo
+POST {{baseUrl}}/api/echo
+
+{ 
+  "url":"/user",
+  "status_code":200,
+  "data": "gAAAAABqprU1EQHfiuEWZHiEPef_uscth73aMBGrgOz0r7JJ_evrtXD4jHWele70Ui4iy9gqqBYAhoaEZz8vW4oFU5MW3o95qJwP5wADyFN2Z3Q8SmZVcwh3LqP_yxBau5lQrz8JgidqYDOO2746g2of3X_wjf_hd3kvzFpQSvXbyiVxcbunA4fYICRW68OQzdwxZkD6YbT-u2TyEnVXxJkmbEpDyPirXf3S2S8mf3O9FVvGPifFhAs-5e6ILqXw52v6PvsRdPF1NiUjQfj4NMPWIciBFjsQ-pUWsbqPatPjaysQwWNSuESxntP2XXpa2ekLB5Py5KbRZFWbhzkbeCa-5LqWG0aClT7kHerFDkaeTtovave8yf4-qeFlBIlpnIhUbkZGMZasRdC34rpb_nLpZQwvEbmX2y9KLi03OOkn6mC7lywgFywmTPd-4E6eE1xPWQ9L3MvufHO3kw_kb8xnWCYxSs61XQ8OblCv9aZtpSft-ARq5XRxzpVLfgFyt9oxrQ5yeDwj_z1mHAzoV-iuXlwdk0Ix_1uvb-LVCzfCflsXTUGr8WfqidCCAZSqEPZ_BSQHLn8ANILofr_SrFeaafmjeTBiMQn6kW8WUB33Bp1DH79u_CY-Tujc-BCCKceeViweC_4iaHDo7l-RYt3yJ7_BOU4d49rK7olcfeHI-Ub_uuzCdXB0vvsR5WGuCH2oR_FLZj6M9HJkOKBe0xo_vjN1-AJbQJYIBKIpzJ7_1PN37uvBWBbMchogyC6kmbU-SIaQdA0StHJDuzP9_n54LennSxtOkA=="
+}
+
+###
+GET {{baseUrl}}/api/echo/payload
