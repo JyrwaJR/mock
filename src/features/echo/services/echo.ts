@@ -104,6 +104,7 @@ export function lookup(slug: string[]): Response {
   }
   const statusCode = entry.status_code ?? 200;
 
+  console.log("ECHO =>", url, statusCode);
   return Response.json(
     {
       data: entry.data,

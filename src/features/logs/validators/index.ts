@@ -16,7 +16,7 @@ export const LogEntrySchema = z.object({
   /** Short identifier of the emitting app. Trimmed; 1–100 chars. */
   app: z.string().trim().min(1).max(100),
   /** Severity level. */
-  type: z.enum(LOG_LEVELS),
+  type: z.enum(LOG_LEVELS).transform((v) => v.toLowerCase()),
   /** Human-readable log line; 1–10,000 chars. */
   message: z.string().min(1).max(10_000),
   /** Optional arbitrary JSON payload. */
