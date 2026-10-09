@@ -5,7 +5,10 @@ import {
   type LogLevel,
 } from "@/src/features/logs/types";
 import type { LogEntryInput, LogsBody } from "@/src/features/logs/validators";
-import { BadRequestError, PayloadTooLargeError } from "@/src/shared/errors/http-errors";
+import {
+  BadRequestError,
+  PayloadTooLargeError,
+} from "@/src/shared/errors/http-errors";
 import { appendLogEntries, clearLogStore, readLogEntries } from "./store";
 
 /** Returns the UTF-8 byte length of a string. */
@@ -48,7 +51,10 @@ function entryTime(entry: LogEntry): number {
  * @param filters - Optional bounds, severities, and text query.
  * @returns The matching entries, newest-first.
  */
-export function applyLogFilters(entries: LogEntry[], filters: LogFilters): LogEntry[] {
+export function applyLogFilters(
+  entries: LogEntry[],
+  filters: LogFilters,
+): LogEntry[] {
   const from = filters.from?.getTime();
   const to = filters.to?.getTime();
   const q = filters.q?.toLowerCase();
@@ -57,10 +63,15 @@ export function applyLogFilters(entries: LogEntry[], filters: LogFilters): LogEn
     const time = entryTime(entry);
     if (from !== undefined && time < from) return false;
     if (to !== undefined && time > to) return false;
-    if (filters.types !== undefined && filters.types.length > 0 && !filters.types.includes(entry.type)) {
+    if (
+      filters.types !== undefined &&
+      filters.types.length > 0 &&
+      !filters.types.includes(entry.type)
+    ) {
       return false;
     }
-    if (q !== undefined && !entry.message.toLowerCase().includes(q)) return false;
+    if (q !== undefined && !entry.message.toLowerCase().includes(q))
+      return false;
     return true;
   });
 
@@ -86,7 +97,9 @@ const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
  */
 function parseDateParam(value: string, name: string, endOfDay: boolean): Date {
   if (DATE_ONLY.test(value)) {
-    return new Date(endOfDay ? `${value}T23:59:59.999Z` : `${value}T00:00:00.000Z`);
+    return new Date(
+      endOfDay ? `${value}T23:59:59.999Z` : `${value}T00:00:00.000Z`,
+    );
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -112,10 +125,15 @@ function parseDateParam(value: string, name: string, endOfDay: boolean): Date {
 export function parseLogFilters(searchParams: URLSearchParams): LogFilters {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
-  const fromDate = from !== null ? parseDateParam(from, "from", false) : undefined;
+  const fromDate =
+    from !== null ? parseDateParam(from, "from", false) : undefined;
   const toDate = to !== null ? parseDateParam(to, "to", true) : undefined;
 
-  if (fromDate !== undefined && toDate !== undefined && fromDate.getTime() > toDate.getTime()) {
+  if (
+    fromDate !== undefined &&
+    toDate !== undefined &&
+    fromDate.getTime() > toDate.getTime()
+  ) {
     throw new BadRequestError("'from' must not be after 'to'");
   }
 
@@ -155,7 +173,7 @@ export function toLogEntry(
 ): LogEntry {
   return {
     app: input.app,
-    type: input.type,
+    type: input.type as LogLevel,
     message: input.message,
     ...(input.content !== undefined ? { content: input.content } : {}),
     timestamp: input.timestamp ?? now.toISOString(),
