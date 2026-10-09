@@ -7,7 +7,7 @@ Content-Type: application/json
 [
   {
     "app": "pensioners",
-    "type": "info",
+    "type": "log",
     "message": "User logged in",
     "content": { "userId": "u_123" }
   },
@@ -19,8 +19,8 @@ Content-Type: application/json
   }
 ]
 
-### Read all logs (newest-first)
-GET {{baseUrl}}/api/logs
+###
+GET http://localhost:3000/api/logs
 
 ### Read logs for one UTC day
 GET {{baseUrl}}/api/logs?from=2026-10-09&to=2026-10-09
@@ -29,13 +29,10 @@ GET {{baseUrl}}/api/logs?from=2026-10-09&to=2026-10-09
 GET {{baseUrl}}/api/logs?from=2026-10-09T00:00:00.000Z&to=2026-10-09T23:59:59.999Z
 
 ### Read only error and warn logs
-GET {{baseUrl}}/api/logs?type=error&type=warn
+GET {{baseUrl}}/api/logs?type=log
 
 ### Search messages containing "timeout" (case-insensitive)
 GET {{baseUrl}}/api/logs?q=timeout
 
 ### Combine filters (errors mentioning boom on a date)
 GET {{baseUrl}}/api/logs?from=2026-10-09&to=2026-10-09&type=error&q=boom
-
-### Clear all logs
-DELETE {{baseUrl}}/api/logs

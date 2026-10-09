@@ -1,5 +1,5 @@
 /** Accepted log severity levels, ordered from least to most severe. */
-export const LOG_LEVELS = ["debug", "info", "warn", "error"] as const;
+export const LOG_LEVELS = ["debug", "info", "warn", "error", "log"] as const;
 
 /** Union of the accepted log severity levels. */
 export type LogLevel = (typeof LOG_LEVELS)[number];
