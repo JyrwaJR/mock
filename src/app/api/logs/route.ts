@@ -2,6 +2,7 @@ import { LogsBodySchema } from "@/src/features/logs/validators";
 import {
   clearLogs,
   listLogs,
+  parseLogFilters,
   writeLogs,
 } from "@/src/features/logs/services/logs";
 import { handleErrors } from "@/src/shared/errors/handle-errors";
@@ -24,11 +25,19 @@ export const POST = withValidation(
 );
 
 /**
- * Lists every stored log entry as a bare JSON array (oldest first), read from
- * `data/logs/logs.json` so entries from previous server sessions are included.
- * A missing or corrupt store yields `[]` at `200` rather than an error.
+ * Lists stored log entries as a bare JSON array, newest-first by timestamp.
+ *
+ * Optional query params, combined with AND: `from`/`to` (inclusive timestamp
+ * bounds — `YYYY-MM-DD` treated as a UTC day, or a full ISO-8601 instant),
+ * repeated `type` params (`debug|info|warn|error`, OR semantics), and `q`
+ * (case-insensitive substring matched against `message`). Unparseable bounds,
+ * unknown types, or `from` after `to` return `400`. Read from
+ * `data/logs/logs.json` so entries from previous server sessions are included;
+ * a missing or corrupt store yields `[]` at `200` rather than an error.
  */
-export const GET = handleErrors(async () => listLogs());
+export const GET = handleErrors(async (request) =>
+  listLogs(parseLogFilters(request.nextUrl.searchParams)),
+);
 
 /**
  * Clears every stored log entry and deletes the persisted file, so nothing
