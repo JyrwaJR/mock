@@ -60,23 +60,25 @@ async function loadFromFile(filePath: string): Promise<LogEntry[]> {
 }
 
 /**
- * Evicts the oldest entries until the serialized array fits within
- * {@link MAX_LOGS_BYTES}. Returns the trimmed array and how many were dropped.
+ * Evicts the oldest entries until the persisted array fits within
+ * {@link MAX_LOGS_BYTES}.
+ *
+ * Measures the *pretty-printed* form — the exact bytes {@link persist} writes —
+ * so the cap bounds the real file size, not a smaller compact estimate. Returns
+ * the surviving suffix and how many leading entries were dropped.
  */
 function trimToCap(entries: LogEntry[]): {
   entries: LogEntry[];
   dropped: number;
 } {
-  let working = entries;
-  let dropped = 0;
+  let start = 0;
   while (
-    working.length > 0 &&
-    byteLength(JSON.stringify(working)) > MAX_LOGS_BYTES
+    start < entries.length &&
+    byteLength(JSON.stringify(entries.slice(start), null, 2)) > MAX_LOGS_BYTES
   ) {
-    working = working.slice(1);
-    dropped += 1;
+    start += 1;
   }
-  return { entries: working, dropped };
+  return { entries: entries.slice(start), dropped: start };
 }
 
 /**

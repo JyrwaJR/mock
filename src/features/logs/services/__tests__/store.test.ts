@@ -2,6 +2,7 @@ import {
   existsSync,
   mkdtempSync,
   readdirSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -99,9 +100,11 @@ describe("byte cap", () => {
 
     expect(result.stored).toBe(15);
     expect(result.dropped).toBeGreaterThan(0);
-    expect(
-      new TextEncoder().encode(JSON.stringify(stored)).byteLength,
-    ).toBeLessThanOrEqual(MAX_LOGS_BYTES);
+    // The *persisted* file — the exact bytes on disk — must fit the cap.
+    const onDisk = new TextEncoder().encode(
+      readFileSync(logsFilePath(), "utf8"),
+    ).byteLength;
+    expect(onDisk).toBeLessThanOrEqual(MAX_LOGS_BYTES);
     // The newest entry survives; the oldest is gone.
     expect(stored.at(-1)).toEqual(entry(14, big));
     expect(stored).not.toContainEqual(entry(0, big));
