@@ -29,7 +29,8 @@ export const POST = withValidation(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async (request, _ctx: any, { body }) => {
     const write = request.nextUrl.searchParams.get("write") === "true";
-    return callRpc(body!.method, body, write);
+    const method = body?.functionName || body?.method || "";
+    return callRpc(method, body, write);
   },
 );
 
