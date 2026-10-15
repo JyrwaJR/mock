@@ -155,6 +155,38 @@ export function getAllEntries(): EchoRegistry {
 }
 
 /**
+ * Deletes every entry whose key starts with `prefix` and persists the result.
+ *
+ * Exists so a whole namespace can be cleared in one atomic write — dropping the
+ * RPC mocks without touching HTTP mocks or the default fallback would otherwise
+ * need a read-modify-write cycle per key, each rewriting the file. Keys not
+ * carrying the prefix are preserved verbatim.
+ *
+ * The count is taken *before* deletion so the caller can report how many rows
+ * were dropped. Deleting nothing is not an error and writes no file, which
+ * keeps repeated clears idempotent and safe in setup/teardown scripts.
+ *
+ * @param prefix - Registry key prefix to match, e.g. `/rpc/`.
+ * @returns The number of entries that existed with that prefix.
+ */
+export function deleteEntriesByPrefix(prefix: string): number {
+  const registry = ensureLoaded();
+  const doomed = Object.keys(registry).filter((key) => key.startsWith(prefix));
+  const existing = doomed.length;
+
+  if (existing === 0) {
+    return 0;
+  }
+
+  for (const key of doomed) {
+    delete registry[key];
+  }
+  persist(registry);
+
+  return existing;
+}
+
+/**
  * Clears the registry: drops the in-memory cache, empties it, and removes the
  * persisted JSON file if present. Exported primarily for manual debugging and
  * for resetting state between test runs.

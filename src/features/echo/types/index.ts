@@ -1,18 +1,35 @@
 /**
  * Request body accepted by `POST /api/echo`.
  *
- * `data` is echoed back verbatim (minus `url`); when `url` is present the
- * entry is registered in the persisted mock registry so later requests to
- * `/api/echo/<url>` return the same `data`. When `url` is omitted the entry
- * is stored as the default fallback for unmatched lookup paths.
+ * `data` is echoed back verbatim (minus the selector); when a selector is
+ * present the entry is registered in the persisted mock registry so later
+ * requests resolve to the same `data`. Exactly one selector may be given:
+ * - `url` — keyed by HTTP path; `GET /api/echo/<url>` serves it.
+ * - `method` / `functionName` — keyed by RPC method; `POST /api/echo/rpc`
+ *   serves it.
+ *
+ * When no selector is given the entry is stored as the default fallback for
+ * unmatched lookup paths.
  */
 export type EchoRequestBody = {
   /**
-   * Registry key. Normalized (leading `/`, no trailing `/`) before storage.
-   * When omitted, the entry is registered as the default fallback returned by
-   * lookups that match no exact path.
+   * Registry key for an HTTP mock. Normalized (leading `/`, no trailing `/`)
+   * before storage. When omitted and no RPC selector is given, the entry is
+   * registered as the default fallback returned by lookups that match no exact
+   * path.
    */
   url?: string;
+  /**
+   * RPC method to mock. Normalized into the `/rpc/<method>` registry key. An
+   * alias of {@link EchoRequestBody.functionName}; mutually exclusive with
+   * `url` and with `functionName`.
+   */
+  method?: string;
+  /**
+   * RPC method to mock, in the spelling real RPC clients send. An alias of
+   * {@link EchoRequestBody.method}; mutually exclusive with `url` and `method`.
+   */
+  functionName?: string;
   /** Arbitrary JSON value returned as the mock response body. */
   data: unknown;
   /**
@@ -23,10 +40,34 @@ export type EchoRequestBody = {
 };
 
 /**
- * A single registered mock entry, keyed by its normalized URL.
+ * Request body accepted by `POST /api/echo/rpc`.
  *
- * `status_code` is the HTTP status returned when the entry's URL is matched;
- * it defaults to `200` when omitted.
+ * Mirrors the body real RPC clients send: the method name lives under
+ * `functionName` (or its `method` alias) and the call's arguments ride along
+ * as sibling keys — `emp_cd`, `password`, `params`, and anything else the
+ * caller sends. Unknown keys are preserved so `?write=true` can capture the
+ * body verbatim, matching `[...slug]`.
+ */
+export type RpcCallRequestBody = {
+  /** RPC method to invoke. Alias of {@link RpcCallRequestBody.functionName}. */
+  method?: string;
+  /** RPC method to invoke, in the spelling real clients send. */
+  functionName?: string;
+  /**
+   * Optional conventional argument container. Not read by the handler — the
+   * mock registry is keyed by method name alone, so arguments never affect
+   * resolution. Accepted so a caller may group arguments if it prefers to.
+   */
+  params?: unknown;
+};
+
+/**
+ * A single registered mock entry, keyed by its normalized URL or RPC method.
+ *
+ * `status_code` is the HTTP status returned when the entry's key is matched;
+ * it defaults to `200` when omitted. RPC mocks use the same entry shape as HTTP
+ * mocks — they are stored under the `/rpc/<method>` key in the same registry,
+ * which is why they are indistinguishable at this layer.
  */
 export type EchoEntry = {
   /** Mock response body returned on a matched lookup. */
@@ -36,8 +77,13 @@ export type EchoEntry = {
 };
 
 /**
- * The persisted mock registry: maps a normalized URL (e.g. `/articles/1`)
- * to its {@link EchoEntry} (`{ data, status_code }`).
+ * The persisted mock registry: maps a normalized URL (e.g. `/articles/1`) to
+ * its {@link EchoEntry} (`{ data, status_code }`).
+ *
+ * RPC mocks share this record under the `/rpc/` key prefix (e.g.
+ * `/rpc/employee_login`), which is what lets `GET /api/echo` and
+ * `DELETE /api/echo` report and reset the whole registry without knowing
+ * whether an entry is an HTTP mock or an RPC method.
  */
 export type EchoRegistry = Record<string, EchoEntry>;
 

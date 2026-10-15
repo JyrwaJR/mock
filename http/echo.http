@@ -64,4 +64,52 @@ POST {{baseUrl}}/api/echo
 }
 
 ###
+
+# ============================================================
+# RPC — invoke a registered method mock.
+# Mocks are registered through POST /api/echo with a `method`
+# (or `functionName`) selector and are served from here.
+# ============================================================
+
+### register an rpc mock
+POST {{baseUrl}}/api/echo
+
+{
+  "functionName": "employee_login",
+  "status_code": 200,
+  "data": {
+    "message": "Success",
+    "data": { "emp_cd": "2009200083T", "name": "Test Employee", "token": "mock-jwt" },
+    "success_flag": true
+  }
+}
+
+### call the rpc method (real client body shape)
+POST {{baseUrl}}/api/echo/rpc
+
+{
+  "functionName": "employee_login",
+  "emp_cd": "2009200083T",
+  "password": "MeghE1TSE"
+}
+
+### same call with ?write=true — captures the body to GET /api/echo/payload
+POST {{baseUrl}}/api/echo/rpc?write=true
+
+{
+  "functionName": "employee_login",
+  "emp_cd": "2009200083T",
+  "password": "MeghE1TSE"
+}
+
+### the method key is also reachable as an http path
+GET {{baseUrl}}/api/echo/rpc/employee_login
+
+### list registered rpc mocks only
+GET {{baseUrl}}/api/echo/rpc
+
+### clear rpc mocks only (http mocks and the * fallback survive)
+DELETE {{baseUrl}}/api/echo/rpc
+
+###
 GET {{baseUrl}}/api/echo/payload

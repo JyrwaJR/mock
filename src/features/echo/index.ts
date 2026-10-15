@@ -4,3 +4,4 @@ export * from "./validators";
 export * from "./services/store";
 export * from "./services/echo";
 export * from "./services/payload";
+export * from "./services/rpc";
