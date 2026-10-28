@@ -128,5 +128,8 @@ export function listRpc(): Response {
  *   is the number of RPC entries that existed immediately before the clear.
  */
 export function clearRpc(): Response {
-  return Response.json({ cleared: deleteEntriesByPrefix(RPC_PREFIX) }, { status: 200 });
+  return Response.json(
+    { cleared: deleteEntriesByPrefix(RPC_PREFIX) },
+    { status: 200 },
+  );
 }

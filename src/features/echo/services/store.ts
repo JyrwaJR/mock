@@ -69,6 +69,7 @@ function loadFromFile(): EchoRegistry {
   const filePath = registryFilePath();
 
   let raw: string;
+
   try {
     // The path may be overridden via ECHO_REGISTRY_FILE, so Turbopack's trace
     // analysis cannot statically scope it; the default is already scoped to

@@ -237,7 +237,7 @@ Content-Type: application/json
 { "title": "Hello" }
 
 ### Echo — list all captured payloads
-GET {{baseUrl}}/api/echo/payload
+GET http://localhost:3000/api/echo/rpc
 
 ### Echo — clear ALL captured payloads (returns {"cleared": n})
 DELETE {{baseUrl}}/api/echo/payload
